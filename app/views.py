@@ -5,6 +5,7 @@ import sec
 import glob
 import time
 import random
+
 root =  os.path.dirname(__file__)
 path = os.path.join(root,'./static/odt/')
 #temp = glob.glob(path)
@@ -29,7 +30,8 @@ def gen():
 def ren(templatename):
     return render_template('ren.html',temp=temp,templatename=templatename)
 
-@app.route('/wodo/<path:path>')
-def send_js(path):
+@app.route('/wodo/')
+def wodo():
+    tname = request.args.get('tname')
     wpath = os.path.join(root,'./static/wodo/')
-    return send_from_directory(wpath, path)
+    return send_from_directory(wpath, 'localeditor.html',tname)

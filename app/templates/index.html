@@ -21,6 +21,7 @@
         right: 50px;
         z-index: 2;
         color: cornsilk;
+        padding: 4px;
         }
 
         #list h4
@@ -45,6 +46,12 @@
         text-transform: capitalize;
         padding-top: 10px;
         }
+        form a {
+        background-color: azure;
+        padding: 2px;
+        border:0 4px 4px 0;
+        }
+
     </style>
 </head>
 
@@ -57,9 +64,13 @@
     {% endfor %}
 </ul>
     <form method="get" action="{{url_for('gen',templatename='')}}" id="gen">
-    <input id="templatename" type="hidden" name="templatename" value="test_template.odt" />
+    <input id="templatename" type="hidden" name="templatename" value="" />
     <input id="jsonid"  name="jsonid" value="" min="0" />
     <a id="btn1" type="button" href="#" onclick="submit()"> Try it!</a>
+    </form>
+    <form method="get" action="{{url_for('wodo')}}" id="wodo">
+        <input id="subm" type="hidden" name="tname" value='test_template.odt'>
+        <a id="btn2" type="button" href="#" onclick="submit2()"> Edit</a>
     </form>
 </div>
     <div id="tname"></div>
@@ -76,19 +87,22 @@
                   {
                      odfcanvas.load("{{url_for('static',filename='odt/test_template.odt')}}");
                      document.getElementById("templatename").value = 'test_template.odt';
+                     document.getElementById("subm").value ='test_template.odt';
                      document.getElementById("tname").innerHTML =  'test_template.odt';
                   }
                   else{
                      console.log(tempname);
                      odfcanvas.load("{{url_for('static',filename='odt/')}}"+tempname);
                      document.getElementById("templatename").value =tempname ;
-
+                     document.getElementById("subm").value =tempname ;
                   }
                 }
                 window.setTimeout(init, 0);
         function submit(){
         document.getElementById("gen").submit();
         }
-
+        function submit2(){
+        document.getElementById("wodo").submit();
+        }
     </script>
 </body>
