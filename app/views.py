@@ -1,6 +1,6 @@
 import os
 from app import app
-from flask import render_template,request, send_from_directory
+from flask import render_template,request, send_from_directory,url_for
 import sec
 import glob
 import time
@@ -33,5 +33,6 @@ def ren(templatename):
 @app.route('/wodo/')
 def wodo():
     tname = request.args.get('tname')
-    wpath = os.path.join(root,'./static/wodo/')
-    return send_from_directory(wpath, 'localeditor.html',tname)
+    wpath = os.path.join(root,'./templates/')
+    return render_template('localeditor.html',tname=tname)
+#    return send_from_directory(wpath, 'texteditor.html')

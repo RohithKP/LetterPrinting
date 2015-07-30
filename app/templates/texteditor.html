@@ -35,7 +35,7 @@
                     alert(err);
                     return;
                 }
-                editor.openDocumentFromUrl("{{tname}}", function(err) {
+                editor.openDocumentFromUrl("/odt/{{tname}}", function(err) {
                     if (err) {
                         // something failed unexpectedly, deal with it (here just a simple alert)
                         alert("There was an error on opening the document: " + err);

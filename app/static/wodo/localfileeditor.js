@@ -47,9 +47,9 @@ function createEditor() {
     function guessDocUrl() {
         var pos, docUrl = String(document.location);
         // If the URL has a fragment (#...), try to load the file it represents
-        pos = docUrl.indexOf('#');
+        pos = docUrl.indexOf('%23');
         if (pos !== -1) {
-            docUrl = docUrl.substr(pos + 1);
+            docUrl = '../odt/'+docUrl.substr(pos + 3);
         } else {
             docUrl = "welcome.odt";
         }
