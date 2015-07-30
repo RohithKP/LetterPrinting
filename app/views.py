@@ -1,6 +1,6 @@
 import os
 from app import app
-from flask import render_template,request
+from flask import render_template,request, send_from_directory
 import sec
 import glob
 import time
@@ -28,3 +28,8 @@ def gen():
 @app.route('/sample/<templatename>')
 def ren(templatename):
     return render_template('ren.html',temp=temp,templatename=templatename)
+
+@app.route('/wodo/<path:path>')
+def send_js(path):
+    wpath = os.path.join(root,'./static/wodo/')
+    return send_from_directory(wpath, path)
