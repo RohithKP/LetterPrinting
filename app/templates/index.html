@@ -1,0 +1,92 @@
+<!doctype html>
+<head>
+<title>Letter Printing</title>
+    <style type="text/css" >
+        body{
+        background-color: beige;
+        margin: 0;
+        }
+        a{
+         text-decoration: none;
+        }
+        #odf{
+        background-color: darkgray;
+        }
+        #list{
+        background-color: cadetblue;
+        width: 300px;
+        float: right;
+        position: fixed;
+        top: 20px;
+        right: 50px;
+        z-index: 2;
+        color: cornsilk;
+        }
+
+        #list h4
+        {
+        color: azure;
+        font-weight: 300;
+        }
+        #list > a{
+            background-color: crimson;
+            padding: 5px;
+            margin-left: 5px;
+            color: azure;
+        }
+        li a{
+            color: floralwhite;
+        }
+        #tname{
+        height: 30px;
+        background-color: black;
+        color: aliceblue;
+        text-align: center;
+        text-transform: capitalize;
+        padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="list">
+<ul>
+    <h4>Available templates</h4>
+    {% for t in temp%}
+    <li ><a href="#" type="button" value="T" onclick="init('{{t}}')">  {{ t }}</a></li>
+    {% endfor %}
+</ul>
+    <form method="get" action="{{url_for('gen',templatename='')}}" id="gen">
+    <input id="templatename" type="hidden" name="templatename" value="test_template.odt" />
+    <a id="btn1" type="button" href="#" onclick="submit()"> Try it!</a>
+    </form>
+</div>
+    <div id="tname"></div>
+    <div id="odf" ></div>
+
+    <script src="{{url_for('static',filename='webodf.js')}}" type="text/javascript" charset="utf-8"></script>
+
+    <script type="text/javascript" charset="utf-8">
+     function init(tempname) {
+              var odfelement = document.getElementById("odf"),
+                  odfcanvas = new odf.OdfCanvas(odfelement);
+               document.getElementById("tname").innerHTML = tempname;
+                  if(typeof(tempname)=='undefined')
+                  {
+                     odfcanvas.load("{{url_for('static',filename='test_template.odt')}}");
+                     document.getElementById("templatename").value = 'test_template.odt';
+                  }
+                  else{
+                     console.log(tempname);
+                     odfcanvas.load("{{url_for('static',filename='')}}"+tempname);
+                     document.getElementById("templatename").value =tempname ;
+
+                  }
+                }
+                window.setTimeout(init, 0);
+        function submit(){
+        document.getElementById("gen").submit();
+        }
+
+    </script>
+</body>

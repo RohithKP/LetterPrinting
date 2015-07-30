@@ -1,0 +1,28 @@
+<body style="background-color:red;" >
+<div id="list">
+<ul>
+    <h4>Available templates</h4>
+    {% if templatename %}
+    <li ><a href="#" type="button" value="T" onclick="init('{{templatename}}')">  {{ templatename }}</a></li>
+    {% endif %}
+</ul>
+</div>
+    <div id="odf" ></div>
+
+    <script src="{{url_for('static',filename='webodf.js')}}" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+                function init(tempname) {
+                  var odfelement = document.getElementById("odf"),
+                      odfcanvas = new odf.OdfCanvas(odfelement);
+                  if(typeof(tempname)=='undefined')
+                  {
+                  odfcanvas.load("{{url_for('static',filename='test_template.odt')}}");
+                  }
+                  else{
+                     console.log(tempname);
+                     odfcanvas.load("{{url_for('static',filename='')}}"+tempname);
+                    }
+                }
+                window.setTimeout(init, 0);
+    </script>
+</body>

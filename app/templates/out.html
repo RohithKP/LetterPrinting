@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>Rendered Template</title>
+</head>
+<body>
+<div id="odf" ></div>
+    <script src="{{url_for('static',filename='webodf.js')}}" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+     function init(tempname) {
+              var odfelement = document.getElementById("odf"),
+                  odfcanvas = new odf.OdfCanvas(odfelement);
+                  if(typeof(tempname)=='undefined')
+                  {
+                     odfcanvas.load("{{url_for('static',filename='out/test_template.odt')}}");
+                  }
+                  else{
+                     console.log(tempname);
+                     odfcanvas.load("{{url_for('static',filename='out/')}}"+tempname);
+                  }
+                }
+                window.setTimeout(init('{{templatename}}'), 0);
+    </script>
+</body>
+</html>
