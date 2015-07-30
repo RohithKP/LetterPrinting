@@ -2,24 +2,24 @@ import os
 import json
 from secretary import Renderer
 
-def renderx(x,i):
+def renderx(x,i,r):
     root =  os.path.dirname(__file__)
     jdata = os.path.join(root,'./static/data.json')
     with open(jdata) as data_file:
          address = json.load(data_file)
-
+    n = i
 #    i = 0;
 #    for a in address['address']:
 	#pprint(address['address'][i])
-    addr = address['address'][i]
+    addr = address['address'][n]
 #        i+=1
+    print(addr)
     engine = Renderer()
     template = os.path.join(root, './static/odt/'+x)
 # Configure custom application filters
     result = engine.render(template,address=addr )
-
     outf = os.path.join(root,'./static/out')
-    fname = os.path.join(outf,x+'.odt')
+    fname = os.path.join(outf,str(r)+x)
     output = open(fname, 'wb')
     output.write(result)
 #for testing purpose

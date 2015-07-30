@@ -3,7 +3,8 @@ from app import app
 from flask import render_template,request
 import sec
 import glob
-
+import time
+import random
 root =  os.path.dirname(__file__)
 path = os.path.join(root,'./static/odt/')
 #temp = glob.glob(path)
@@ -18,8 +19,11 @@ def index():
 #@app.route('/gen/<templatename>')
 def gen():
     templatename = request.args.get('templatename')
-    sec.renderx(templatename,1)
-    return render_template('out.html',templatename = templatename)
+    i = request.args.get('jsonid')
+    print(i+' the value')
+    r = int(i.encode('UTF8'))
+    sec.renderx(templatename,int(i.encode('UTF8')),r)
+    return render_template('out.html',templatename = str(r)+templatename)
 
 @app.route('/sample/<templatename>')
 def ren(templatename):
