@@ -33,6 +33,15 @@ def ren(templatename):
 @app.route('/wodo/')
 def wodo():
     tname = request.args.get('tname')
-    wpath = os.path.join(root,'./templates/')
+  #  wpath = os.path.join(root,'./templates/')
     return render_template('localeditor.html',tname=tname)
 #    return send_from_directory(wpath, 'texteditor.html')
+
+@app.route('/ViewerJS/')
+def viewer():
+    wpath = os.path.join(root,'./static/ViewerJS/')
+    return send_from_directory(wpath,'index.html')
+
+@app.route('/temp/')
+def func():
+    return render_template('vjs.html')

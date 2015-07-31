@@ -1,10 +1,14 @@
 <!doctype html>
 <head>
+     <meta http-Equiv="Cache-Control" Content="no-cache" />
+    <meta http-Equiv="Pragma" Content="no-cache" />
+    <meta http-Equiv="Expires" Content="0" />
 <title>Letter Printing</title>
     <style type="text/css" >
         body{
         background-color: beige;
         margin: 0;
+        padding:10px;
         }
         a{
          text-decoration: none;
@@ -17,8 +21,8 @@
         width: 300px;
         float: right;
         position: fixed;
-        top: 20px;
-        right: 50px;
+        top: 50px;
+        right:10px;
         z-index: 2;
         color: cornsilk;
         padding: 4px;
@@ -38,7 +42,7 @@
         li a{
             color: floralwhite;
         }
-        #tname{
+        #thname{
         height: 30px;
         background-color: black;
         color: aliceblue;
@@ -51,7 +55,7 @@
         padding: 2px;
         border:0 4px 4px 0;
         }
-        #wodo{padding: 5px;color: aliceblue;font-size: 1.5em }
+        #wodo{color: aliceblue;font-size: 1.2em;float:right;padding-right:555px; border:1px solid aliceblue;}
     </style>
 </head>
 
@@ -60,7 +64,7 @@
 <ul>
     <h4>Available templates</h4>
     {% for t in temp%}
-    <li ><a href="#" type="button" value="T" onclick="init('{{t}}')">  {{ t }}</a></li>
+    <li ><a href="#" type="button" value="T" onclick=" init('{{t}}')">  {{ t }}</a></li>
     {% endfor %}
 </ul>
     <form method="get" action="{{url_for('gen',templatename='')}}" id="gen">
@@ -69,41 +73,49 @@
     <a id="btn1" type="button" href="#" onclick="submit()"> Try it!</a>
     </form>
 </div>
-    <div id="tname"></div>
+    <div id="thname"></div>
      <div>
+        <div id="" style="padding:4px 0px;">
+        <iframe id="frame" src = "#" width='724' height='600' allowfullscreen webkitallowfullscreen></iframe>
         <form method="get" action="{{url_for('wodo')}}" id="wodo">
             <input id="subm" type="hidden" name="tname" value='test_template.odt'>
             <a id="btn2" type="button" href="#" onclick="submit2()"> Edit</a>
         </form>
-        <div id="odf" ></div>
+        </div>
     </div>
     <script src="{{url_for('static',filename='webodf.js')}}" type="text/javascript" charset="utf-8"></script>
 
     <script type="text/javascript" charset="utf-8">
-     function init(tempname) {
-              var odfelement = document.getElementById("odf"),
-                  odfcanvas = new odf.OdfCanvas(odfelement);
-               document.getElementById("tname").innerHTML = tempname;
-                  if(typeof(tempname)=='undefined')
+        //var tempname;
+        function init(tempname) {
+               var tempname;
+               document.getElementById("thname").innerHTML = tempname;
+               frame = document.getElementById("frame");
+               frame.src = '';
+               frame.contentWindow.location.reload(true);
+                 if(typeof(tempname)=='undefined')
                   {
-                     odfcanvas.load("{{url_for('static',filename='odt/test_template.odt')}}");
+                     frame.src = '/ViewerJS/#../odt/test_template.odt';
                      document.getElementById("templatename").value = 'test_template.odt';
-                     document.getElementById("subm").value ='test_template.odt';
-                     document.getElementById("tname").innerHTML =  'test_template.odt';
+                     document.getElementById("subm").value ='#test_template.odt';
+                     document.getElementById("thname").innerHTML =  'test_template.odt';
                   }
                   else{
+                     frame.src = "/ViewerJS/#../odt/"+tempname;
+                     frame.contentWindow.location.reload(true);
                      console.log(tempname);
-                     odfcanvas.load("{{url_for('static',filename='odt/')}}"+tempname);
                      document.getElementById("templatename").value =tempname ;
                      document.getElementById("subm").value ='#'+tempname ;
                   }
+
                 }
-                window.setTimeout(init, 0);
+               window.setTimeout(init, 0);
         function submit(){
         document.getElementById("gen").submit();
         }
         function submit2(){
         document.getElementById("wodo").submit();
         }
+
     </script>
 </body>
