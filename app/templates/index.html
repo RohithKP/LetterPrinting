@@ -55,7 +55,7 @@
         padding: 2px;
         border:0 4px 4px 0;
         }
-        #wodo{color: aliceblue;font-size: 1.2em;float:right;padding-right:555px; border:1px solid aliceblue;}
+        #wodo{color: aliceblue;font-size: 1.2em;float:right;padding-right:545px; border:1px solid aliceblue;}
     </style>
 </head>
 
@@ -64,12 +64,14 @@
 <ul>
     <h4>Available templates</h4>
     {% for t in temp%}
-    <li ><a href="#" type="button" value="T" onclick=" init('{{t}}')">  {{ t }}</a></li>
+    <li ><a href="#" type="button" value="" onclick=" init('{{t}}')">  {{ t }}</a></li>
     {% endfor %}
 </ul>
     <form method="get" action="{{url_for('gen',templatename='')}}" id="gen">
     <input id="templatename" type="hidden" name="templatename" value="" />
-    <input id="jsonid"  name="jsonid" value="" min="0" />
+    <hr>
+    <input id="jsonpath"  name="jsonpath" value="" required />
+    <input id="jsonid"  name="jsonid" value="" min="0" required />
     <a id="btn1" type="button" href="#" onclick="submit()"> Try it!</a>
     </form>
 </div>
@@ -111,7 +113,15 @@
                 }
                window.setTimeout(init, 0);
         function submit(){
-        document.getElementById("gen").submit();
+               var x = document.forms["gen"]["jsonid"].value;
+               var y = document.forms["gen"]["jsonpath"].value;
+            if (x == null || x == ""||y == null || y == "") {
+                    alert("fields must be filled out");
+                    return false;
+                }
+                else{
+                document.getElementById("gen").submit();
+                }
         }
         function submit2(){
         document.getElementById("wodo").submit();

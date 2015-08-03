@@ -21,14 +21,14 @@ def index():
 def gen():
     templatename = request.args.get('templatename')
     i = request.args.get('jsonid')
-    print(i+' the value')
+    path = request.args.get('jsonpath')
     r = int(i.encode('UTF8'))
-    sec.renderx(templatename,int(i.encode('UTF8')),r)
+    sec.renderx(templatename,r,str(path))
     return render_template('out.html',templatename = str(r)+templatename)
 
-@app.route('/sample/<templatename>')
-def ren(templatename):
-    return render_template('ren.html',temp=temp,templatename=templatename)
+#@app.route('/sample/<templatename>')
+#def ren(templatename):
+#    return render_template('ren.html',temp=temp,templatename=templatename)
 
 @app.route('/wodo/')
 def wodo():

@@ -2,12 +2,12 @@ import os
 import json
 from secretary import Renderer
 
-def renderx(x,i,r):
+def renderx(x,r,path):
     root =  os.path.dirname(__file__)
-    jdata = os.path.join(root,'./static/data.json')
+    jdata = os.path.join(root,'./static/json/'+path+'.json')
     with open(jdata) as data_file:
          address = json.load(data_file)
-    n = i
+    n = r
 #    i = 0;
 #    for a in address['address']:
 	#pprint(address['address'][i])
