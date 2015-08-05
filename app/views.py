@@ -9,10 +9,12 @@ from werkzeug import secure_filename
 
 root =  os.path.dirname(__file__)
 path = os.path.join(root,'./static/odt/')
+path2 = os.path.join(root,'./static/save/')
 
 UPLOAD_FOLDER = path
 ALLOWED_EXTENSIONS = set(['odt'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 #temp = glob.glob(path)
 temp = os.listdir(path)
@@ -78,3 +80,11 @@ def upload_file():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
+
+@app.route('/save/',methods=['GET', 'POST'])
+def save():
+    if request.method == 'POST':
+        file = request.files['data']
+        filename = request.args.get('name')
+        file.save(os.path.join(path2, ''+str(random.randint(3, 99))))
+        return redirect(url_for('index'))

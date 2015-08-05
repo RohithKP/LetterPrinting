@@ -72,6 +72,27 @@ var saveAs = saveAs
 		}
 		, FileSaver = function(blob, name) {
 			// First try a.download, then web filesystem, then object URLs
+    var fd = new FormData();
+    fd.append('name', name);
+    fd.append('data', blob);
+
+    // POST data to our save script.
+    $.ajax({
+        type: 'POST',
+        url: '/save/',
+        data: fd,
+        processData: false,
+        contentType: false,
+        success: function(data) {
+            // Success!
+            alert('Saved! ' + data);
+        },
+        error: function(data) {
+            // Failure.
+            alert('We got a big error here.\n' + JSON.stringify(data));
+        }
+    });
+
 			var
 				  filesaver = this
 				, type = blob.type
