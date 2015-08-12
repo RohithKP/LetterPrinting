@@ -114,11 +114,11 @@ def login():
               session['logged_in'] = True
           else:
               flash('wrong password!')
-          return index()
+          return redirect(url_for('index'))
     else:
        return render_template('login.html')
 
 @app.route("/logout")
 def logout():
     session['logged_in'] = False
-    return home()
+    return redirect(url_for('login'))

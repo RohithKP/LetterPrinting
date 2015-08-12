@@ -5,6 +5,8 @@
     <body>
         {% if session['logged_in'] %}
         <p>You're logged in already!</p>
+        <a href="/logout"> LOGOUT </a>
+    </br>
         {% else %}
         <form action="/login" method="POST">
           <input type="username" name="username" placeholder="Username">
