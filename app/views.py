@@ -99,21 +99,24 @@ def signUp():
 def signUpUser():
     user =  request.form['username'];
     password = request.form['password'];
-    u = models.User(nickname=user, password=password)
+    u = models.User(username=user, password=password)
     db.session.add(u)
     db.session.commit()
     users = models.User.query.all()
     for u in users:
-        print(u.id,u.nickname)
+        print(u.id,u.username)
     return json.dumps({'status':'OK','user':user,'pass':password});
 
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
-          if request.form['password'] == 'password' and request.form['username'] == 'admin':
+          POST_USERNAME = request.form['username']
+          POST_PASSWORD = request.form['password']
+          if models.User.query.filter_by(username=POST_USERNAME,password=POST_PASSWORD).first():
               session['logged_in'] = True
           else:
               flash('wrong password!')
+              return redirect(url_for('login'))
           return redirect(url_for('index'))
     else:
        return render_template('login.html')
@@ -122,3 +125,4 @@ def login():
 def logout():
     session['logged_in'] = False
     return redirect(url_for('login'))
+
