@@ -45,11 +45,14 @@ function createEditor() {
      * @return {?string}
      */
     function guessDocUrl() {
-        var pos, docUrl = String(document.location);
+        var pos,last, docUrl = String(document.location);
         // If the URL has a fragment (#...), try to load the file it represents
-        pos = docUrl.indexOf('%23');
+        pos = docUrl.indexOf('%23')+3;
+     //  last = docUrl.lastIndexOf('?');
+      //  console.log(last);
         if (pos !== -1) {
-            docUrl = '../odt/'+docUrl.substr(pos + 3);
+            docUrl = '../odt/'+docUrl.substr(pos);//.slice(pos,last);
+            console.log(docUrl);
         } else {
             docUrl = "welcome.odt";
         }
@@ -180,7 +183,7 @@ function createEditor() {
 
         if (docUrl) {
             loadedFilename = docUrl;
-            editor.openDocumentFromUrl(docUrl, startEditing);
+            editor.openDocumentFromUrl(docUrl+"?"+Math.floor((Math.random() * 100) + 1), startEditing);
         }
     }
 

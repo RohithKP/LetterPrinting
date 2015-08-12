@@ -72,6 +72,7 @@ var saveAs = saveAs
 		}
 		, FileSaver = function(blob, name) {
 			// First try a.download, then web filesystem, then object URLs
+    console.log(name+" inside Filesaver");
     var fd = new FormData();
     fd.append('name', name);
     fd.append('data', blob);
@@ -85,7 +86,8 @@ var saveAs = saveAs
         contentType: false,
         success: function(data) {
             // Success!
-            alert('Saved! ' + data);
+           // alert('Saved! ');
+            location.reload(true);
         },
         error: function(data) {
             // Failure.
@@ -93,121 +95,121 @@ var saveAs = saveAs
         }
     });
 
-			var
-				  filesaver = this
-				, type = blob.type
-				, blob_changed = false
-				, object_url
-				, target_view
-				, get_object_url = function() {
-					var object_url = get_URL().createObjectURL(blob);
-					deletion_queue.push(object_url);
-					return object_url;
-				}
-				, dispatch_all = function() {
-					dispatch(filesaver, "writestart progress write writeend".split(" "));
-				}
-				// on any filesys errors revert to saving with object URLs
-				, fs_error = function() {
-					// don't create more object URLs than needed
-					if (blob_changed || !object_url) {
-						object_url = get_object_url(blob);
-					}
-					if (target_view) {
-						target_view.location.href = object_url;
-					} else {
-                        window.open(object_url, "_blank");
-                    }
-					filesaver.readyState = filesaver.DONE;
-					dispatch_all();
-				}
-				, abortable = function(func) {
-					return function() {
-						if (filesaver.readyState !== filesaver.DONE) {
-							return func.apply(this, arguments);
-						}
-					};
-				}
-				, create_if_not_found = {create: true, exclusive: false}
-				, slice
-			;
-			filesaver.readyState = filesaver.INIT;
-			if (!name) {
-				name = "download";
-			}
-			if (can_use_save_link) {
-				object_url = get_object_url(blob);
-				save_link.href = object_url;
-				save_link.download = name;
-				click(save_link);
-				filesaver.readyState = filesaver.DONE;
-				dispatch_all();
-				return;
-			}
-			// Object and web filesystem URLs have a problem saving in Google Chrome when
-			// viewed in a tab, so I force save with application/octet-stream
-			// http://code.google.com/p/chromium/issues/detail?id=91158
-			if (view.chrome && type && type !== force_saveable_type) {
-				slice = blob.slice || blob.webkitSlice;
-				blob = slice.call(blob, 0, blob.size, force_saveable_type);
-				blob_changed = true;
-			}
-			// Since I can't be sure that the guessed media type will trigger a download
-			// in WebKit, I append .download to the filename.
-			// https://bugs.webkit.org/show_bug.cgi?id=65440
-			if (webkit_req_fs && name !== "download") {
-				name += ".download";
-			}
-			if (type === force_saveable_type || webkit_req_fs) {
-				target_view = view;
-			}
-			if (!req_fs) {
-				fs_error();
-				return;
-			}
-			fs_min_size += blob.size;
-			req_fs(view.TEMPORARY, fs_min_size, abortable(function(fs) {
-				fs.root.getDirectory("saved", create_if_not_found, abortable(function(dir) {
-					var save = function() {
-						dir.getFile(name, create_if_not_found, abortable(function(file) {
-							file.createWriter(abortable(function(writer) {
-								writer.onwriteend = function(event) {
-									target_view.location.href = file.toURL();
-									deletion_queue.push(file);
-									filesaver.readyState = filesaver.DONE;
-									dispatch(filesaver, "writeend", event);
-								};
-								writer.onerror = function() {
-									var error = writer.error;
-									if (error.code !== error.ABORT_ERR) {
-										fs_error();
-									}
-								};
-								"writestart progress write abort".split(" ").forEach(function(event) {
-									writer["on" + event] = filesaver["on" + event];
-								});
-								writer.write(blob);
-								filesaver.abort = function() {
-									writer.abort();
-									filesaver.readyState = filesaver.DONE;
-								};
-								filesaver.readyState = filesaver.WRITING;
-							}), fs_error);
-						}), fs_error);
-					};
-					dir.getFile(name, {create: false}, abortable(function(file) {
-						// delete file if it already exists
-						file.remove();
-						save();
-					}), abortable(function(ex) {
-						if (ex.code === ex.NOT_FOUND_ERR) {
-							save();
-						} else {
-							fs_error();
-						}
-					}));
-				}), fs_error);
-			}), fs_error);
+// 			var
+// 				  filesaver = this
+// 				, type = blob.type
+// 				, blob_changed = false
+// 				, object_url
+// 				, target_view
+// 				, get_object_url = function() {
+// 					var object_url = get_URL().createObjectURL(blob);
+// 					deletion_queue.push(object_url);
+// 					return object_url;
+// 				}
+// 				, dispatch_all = function() {
+// 					dispatch(filesaver, "writestart progress write writeend".split(" "));
+// 				}
+// 				// on any filesys errors revert to saving with object URLs
+// 				, fs_error = function() {
+// 					// don't create more object URLs than needed
+// 					if (blob_changed || !object_url) {
+// 						object_url = get_object_url(blob);
+// 					}
+// 					if (target_view) {
+// 						target_view.location.href = object_url;
+// 					} else {
+//                         window.open(object_url, "_blank");
+//                     }
+// 					filesaver.readyState = filesaver.DONE;
+// 					dispatch_all();
+// 				}
+// 				, abortable = function(func) {
+// 					return function() {
+// 						if (filesaver.readyState !== filesaver.DONE) {
+// 							return func.apply(this, arguments);
+// 						}
+// 					};
+// 				}
+// 				, create_if_not_found = {create: true, exclusive: false}
+// 				, slice
+// 			;
+// 			filesaver.readyState = filesaver.INIT;
+// 			if (!name) {
+// 				name = "download";
+// 			}
+// 			if (can_use_save_link) {
+// 				object_url = get_object_url(blob);
+// 				save_link.href = object_url;
+// 				save_link.download = name;
+// 				click(save_link);
+// 				filesaver.readyState = filesaver.DONE;
+// 				dispatch_all();
+// 				return;
+// 			}
+// 			// Object and web filesystem URLs have a problem saving in Google Chrome when
+// 			// viewed in a tab, so I force save with application/octet-stream
+// 			// http://code.google.com/p/chromium/issues/detail?id=91158
+// 			if (view.chrome && type && type !== force_saveable_type) {
+// 				slice = blob.slice || blob.webkitSlice;
+// 				blob = slice.call(blob, 0, blob.size, force_saveable_type);
+// 				blob_changed = true;
+// 			}
+// 			// Since I can't be sure that the guessed media type will trigger a download
+// 			// in WebKit, I append .download to the filename.
+// 			// https://bugs.webkit.org/show_bug.cgi?id=65440
+// 			if (webkit_req_fs && name !== "download") {
+// 				name += ".download";
+// 			}
+// 			if (type === force_saveable_type || webkit_req_fs) {
+// 				target_view = view;
+// 			}
+// 			if (!req_fs) {
+// 				fs_error();
+// 				return;
+// 			}
+// 			fs_min_size += blob.size;
+// 			req_fs(view.TEMPORARY, fs_min_size, abortable(function(fs) {
+// 				fs.root.getDirectory("saved", create_if_not_found, abortable(function(dir) {
+// 					var save = function() {
+// 						dir.getFile(name, create_if_not_found, abortable(function(file) {
+// 							file.createWriter(abortable(function(writer) {
+// 								writer.onwriteend = function(event) {
+// 									target_view.location.href = file.toURL();
+// 									deletion_queue.push(file);
+// 									filesaver.readyState = filesaver.DONE;
+// 									dispatch(filesaver, "writeend", event);
+// 								};
+// 								writer.onerror = function() {
+// 									var error = writer.error;
+// 									if (error.code !== error.ABORT_ERR) {
+// 										fs_error();
+// 									}
+// 								};
+// 								"writestart progress write abort".split(" ").forEach(function(event) {
+// 									writer["on" + event] = filesaver["on" + event];
+// 								});
+// 								writer.write(blob);
+// 								filesaver.abort = function() {
+// 									writer.abort();
+// 									filesaver.readyState = filesaver.DONE;
+// 								};
+// 								filesaver.readyState = filesaver.WRITING;
+// 							}), fs_error);
+// 						}), fs_error);
+// 					};
+// 					dir.getFile(name, {create: false}, abortable(function(file) {
+// 						// delete file if it already exists
+// 						file.remove();
+// 						save();
+// 					}), abortable(function(ex) {
+// 						if (ex.code === ex.NOT_FOUND_ERR) {
+// 							save();
+// 						} else {
+// 							fs_error();
+// 						}
+// 					}));
+// 				}), fs_error);
+// 			}), fs_error);
 		}
 		, FS_proto = FileSaver.prototype
 		, saveAs = function(blob, name) {

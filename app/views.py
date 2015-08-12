@@ -1,11 +1,12 @@
 import os
 from app import app
-from flask import render_template,request, send_from_directory,url_for,redirect
+from flask import render_template,request, send_from_directory,url_for,redirect,flash
 import sec
 import glob
 import time
-import random
+import random,json
 from werkzeug import secure_filename
+from app import models,db
 
 root =  os.path.dirname(__file__)
 path = os.path.join(root,'./static/odt/')
@@ -15,13 +16,14 @@ UPLOAD_FOLDER = path
 ALLOWED_EXTENSIONS = set(['odt'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-
+app.secret_key = 'some_secret'
 #temp = glob.glob(path)
-temp = os.listdir(path)
+
 
 @app.route('/')
 @app.route('/index')
 def index():
+    temp = os.listdir(path)
     return render_template('index.html',temp = temp)
 
 @app.route('/gen/')
@@ -40,10 +42,10 @@ def gen():
 
 @app.route('/wodo/')
 def wodo():
-    tname = request.args.get('tname')
-  #  wpath = os.path.join(root,'./templates/')
-    return render_template('localeditor.html',tname=tname)
-#    return send_from_directory(wpath, 'texteditor.html')
+     global tname
+     tname = request.args.get('tname')
+     return render_template('localeditor.html',tname=tname)
+  #  return send_from_directory(wpath, 'texteditor.html')
 
 @app.route('/ViewerJS/')
 def viewer():
@@ -78,13 +80,31 @@ def upload_file():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/save/',methods=['GET', 'POST'])
 def save():
     if request.method == 'POST':
         file = request.files['data']
-        filename = request.args.get('name')
-        file.save(os.path.join(path2, ''+str(random.randint(3, 99))))
+        print(tname)
+        file.save(os.path.join(path, tname[1:]))
         return redirect(url_for('index'))
+
+@app.route('/signUp/')
+def signUp():
+    flash('Logged in successfully.')
+    return render_template('signup.html')
+
+@app.route('/signUpUser', methods=['POST'])
+def signUpUser():
+    user =  request.form['username'];
+    password = request.form['password'];
+    u = models.User(nickname=user, password=password)
+    db.session.add(u)
+    db.session.commit()
+    users = models.User.query.all()
+    for u in users:
+        print(u.id,u.nickname)
+    return json.dumps({'status':'OK','user':user,'pass':password});
+
+

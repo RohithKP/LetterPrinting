@@ -1,8 +1,5 @@
 <!doctype html>
 <head>
-     <meta http-Equiv="Cache-Control" Content="no-cache" />
-    <meta http-Equiv="Pragma" Content="no-cache" />
-    <meta http-Equiv="Expires" Content="0" />
 <title>Letter Printing</title>
     <style type="text/css" >
         body{
@@ -98,13 +95,13 @@
                frame.contentWindow.location.reload(true);
                  if(typeof(tempname)=='undefined')
                   {
-                     frame.src = '/ViewerJS/#../odt/test_template.odt';
+                     frame.src = '/ViewerJS/#../odt/test_template.odt'+"?"+Math.floor((Math.random() * 100) + 1);
                      document.getElementById("templatename").value = 'test_template.odt';
                      document.getElementById("subm").value ='#test_template.odt';
                      document.getElementById("thname").innerHTML =  'test_template.odt';
                   }
                   else{
-                     frame.src = "/ViewerJS/#../odt/"+tempname;
+                     frame.src = "/ViewerJS/#../odt/"+tempname+"?"+Math.floor((Math.random() * 100) + 1);
                      frame.contentWindow.location.reload(true);
                      console.log(tempname);
                      document.getElementById("templatename").value =tempname ;

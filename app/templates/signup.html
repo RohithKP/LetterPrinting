@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+ <html lang="en">
+
+ <head>
+     <meta charset="utf-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <meta name="description" content="">
+     <meta name="author" content="">
+     <link rel="icon" href="../../favicon.ico">
+
+     <title>SignUp </title>
+
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+ </head>
+
+ <body>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% block body %}{% endblock %}
+
+     <div class="container">
+
+         <form class="form-signup" action="{{url_for('signUp')}}" method="post" role="form">
+             <h2 class="form-signin-heading">Please Sign Up </h2>
+             <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+             <input type="password" name="password" class="form-control" placeholder="Password" required>
+
+             <button class="" type="button">Register </button>
+         </form>
+
+     </div>
+<script>
+ $(function() {
+    $('button').click(function() {
+        var user = $('#txtUsername').val();
+        var pass = $('#txtPassword').val();
+        $.ajax({
+            url: '/signUpUser',
+            data: $('form').serialize(),
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+});
+</script>
+ </body>
+
+ </html>
