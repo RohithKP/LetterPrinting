@@ -9,12 +9,11 @@ from werkzeug import secure_filename
 from app import models,db
 
 root =  os.path.dirname(__file__)
-path = os.path.join(root,'./static/odt/')
-path2 = os.path.join(root,'./static/save/')
-
-UPLOAD_FOLDER = path
+#path = os.path.join(root,'./static/odt/')
+path2 = os.path.join(root,'./static/users/')
+#UPLOAD_FOLDER = path
 ALLOWED_EXTENSIONS = set(['odt'])
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+#app.config['UPLOAD_FOLDER'] = path
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.secret_key = 'some_secret'
 #temp = glob.glob(path)
@@ -23,7 +22,7 @@ app.secret_key = 'some_secret'
 @app.route('/')
 @app.route('/index')
 def index():
-    temp = os.listdir(path)
+    temp = os.listdir(os.path.join(root,'./static/users/%s/odt/' % session['user_name']))
     return render_template('index.html',temp = temp)
 
 @app.route('/gen/')
@@ -31,9 +30,9 @@ def index():
 def gen():
     templatename = request.args.get('templatename')
     i = request.args.get('jsonid')
-    path = request.args.get('jsonpath')
+    jpath = request.args.get('jsonpath')
     r = int(i.encode('UTF8'))
-    sec.renderx(templatename,r,str(path))
+    sec.renderx(templatename,r,session['user_name'])
     return render_template('out.html',templatename = str(r)+templatename)
 
 #@app.route('/sample/<templatename>')
@@ -44,17 +43,13 @@ def gen():
 def wodo():
      global tname
      tname = request.args.get('tname')
-     return render_template('localeditor.html',tname=tname)
+     return render_template('localeditor.html')
   #  return send_from_directory(wpath, 'texteditor.html')
 
 @app.route('/ViewerJS/')
 def viewer():
     wpath = os.path.join(root,'./static/ViewerJS/')
     return send_from_directory(wpath,'index.html')
-
-@app.route('/temp/')
-def func():
-    return render_template('vjs.html')
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -66,7 +61,7 @@ def upload_file():
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(os.path.join(root,'./static/users/%s/odt/' % session['user_name']), filename))
             return redirect(url_for('index'))
     return '''
     <!doctype html>
@@ -80,32 +75,36 @@ def upload_file():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    return send_from_directory(os.path.join(root,'./static/users/%s/odt/' % session['user_name']), filename)
 
 @app.route('/save/',methods=['GET', 'POST'])
 def save():
     if request.method == 'POST':
         file = request.files['data']
-        print(tname)
-        file.save(os.path.join(path, tname[1:]))
+        file.save(os.path.join(os.path.join(root,'./static/users/%s/odt/' % session['user_name']), tname))
         return redirect(url_for('index'))
 
 @app.route('/signup/')
 def signUp():
-    flash('Logged in successfully.')
     return render_template('signup.html')
 
 @app.route('/signUpUser', methods=['POST'])
 def signUpUser():
-    user =  request.form['username'];
+    username =  request.form['username'];
     password = request.form['password'];
-    u = models.User(username=user, password=password)
+    os.makedirs(path2+'/'+username)
+    os.makedirs(path2+'/'+username+'/odt')
+    os.makedirs(path2+'/'+username+'/out')
+    os.makedirs(path2+'/'+username+'/json')
+    u = models.User(username=username, password=password)
     db.session.add(u)
     db.session.commit()
+    session['logged_in'] = True
+    session['user_id'] = u.username
     users = models.User.query.all()
     for u in users:
         print(u.id,u.username)
-    return json.dumps({'status':'OK','user':user,'pass':password});
+    return json.dumps({'status':'OK','user':username,'pass':password});
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -113,7 +112,12 @@ def login():
           POST_USERNAME = request.form['username']
           POST_PASSWORD = request.form['password']
           if models.User.query.filter_by(username=POST_USERNAME,password=POST_PASSWORD).first():
+              user = models.User.query.filter_by(username=POST_USERNAME,password=POST_PASSWORD).first()
               session['logged_in'] = True
+              session['user_name'] = user.username
+              #render_template('index.html',)
+              global path1
+              path1 = os.path.join(root,'./static/users/%s/odt/' % session['user_name'])
           else:
               flash('wrong password!')
               return redirect(url_for('login'))

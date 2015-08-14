@@ -44,14 +44,21 @@ function createEditor() {
      *
      * @return {?string}
      */
+      var $_GET = {},
+          args = location.search.substr(1).split(/&/);
+      for (var i=0; i<args.length; ++i) {
+          var tmp = args[i].split(/=/);
+          if (tmp[0] != "") {
+              $_GET[decodeURIComponent(tmp[0])] = decodeURIComponent(tmp.slice(1).join("").replace("+", " "));
+          }
+      }
+    console.log($_GET);
     function guessDocUrl() {
         var pos,last, docUrl = String(document.location);
         // If the URL has a fragment (#...), try to load the file it represents
-        pos = docUrl.indexOf('%23')+3;
-     //  last = docUrl.lastIndexOf('?');
-      //  console.log(last);
-        if (pos !== -1) {
-            docUrl = '../odt/'+docUrl.substr(pos);//.slice(pos,last);
+        //pos = docUrl.indexOf('%23')+3;
+        if ($_GET.tname) {
+            docUrl = "../users/"+$_GET.username+"/odt/"+$_GET.tname;
             console.log(docUrl);
         } else {
             docUrl = "welcome.odt";

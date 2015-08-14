@@ -4,7 +4,7 @@
     </head>
     <body>
         {% if session['logged_in'] %}
-        <p>You're logged in already!</p>
+        <p>You're logged in already!!{{session['user_id']}}</p>
         <a href="/logout"> LOGOUT </a>
     </br>
         {% else %}

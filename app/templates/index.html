@@ -74,11 +74,18 @@
     </form>
 </div>
     <div id="thname"></div>
+        {% if session['logged_in'] %}
+        <p>Hii {{session['user_name']}}</p>
+        <a href="/logout"> LOGOUT </a>
+        {% else %}
+        <a href="/login">login</a>
+        {% endif %}
      <div>
         <div id="" style="padding:4px 0px;">
         <iframe id="frame" src = "#" width='724' height='600' allowfullscreen webkitallowfullscreen></iframe>
         <form method="get" action="{{url_for('wodo')}}" id="wodo">
             <input id="subm" type="hidden" name="tname" value='test_template.odt'>
+            <input id="user" type="hidden" name="username" value=''>
             <a id="btn2" type="button" href="#" onclick="submit2()"> Edit</a>
         </form>
         </div>
@@ -87,6 +94,7 @@
 
     <script type="text/javascript" charset="utf-8">
         //var tempname;
+        var user = "{{session['user_name']}}";
         function init(tempname) {
                var tempname;
                document.getElementById("thname").innerHTML = tempname;
@@ -95,17 +103,19 @@
                frame.contentWindow.location.reload(true);
                  if(typeof(tempname)=='undefined')
                   {
-                     frame.src = '/ViewerJS/#../odt/test_template.odt'+"?"+Math.floor((Math.random() * 100) + 1);
+                     frame.src = "/ViewerJS/#../users/"+user+"/odt/test_template.odt?"+Math.floor((Math.random() * 100) + 1);
                      document.getElementById("templatename").value = 'test_template.odt';
-                     document.getElementById("subm").value ='#test_template.odt';
+                     document.getElementById("subm").value ='test_template.odt';
                      document.getElementById("thname").innerHTML =  'test_template.odt';
+                     document.getElementById("user").value =user ;
                   }
                   else{
-                     frame.src = "/ViewerJS/#../odt/"+tempname+"?"+Math.floor((Math.random() * 100) + 1);
+                      frame.src = "/ViewerJS/#../users/"+user+"/odt/"+tempname+"?"+Math.floor((Math.random() * 100) + 1);
                      frame.contentWindow.location.reload(true);
                      console.log(tempname);
                      document.getElementById("templatename").value =tempname ;
-                     document.getElementById("subm").value ='#'+tempname ;
+                     document.getElementById("subm").value =tempname ;
+                     document.getElementById("user").value =user ;
                   }
 
                 }

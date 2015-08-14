@@ -15,7 +15,7 @@
                   }
                   else{
                      console.log(tempname);
-                     odfcanvas.load("{{url_for('static',filename='out/')}}"+tempname);
+                      odfcanvas.load("{{url_for('static',filename='users/')}}{{session['user_name']}}/out/"+tempname);
                   }
                 }
                 window.setTimeout(init('{{templatename}}'), 0);
