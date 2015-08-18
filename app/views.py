@@ -7,20 +7,23 @@ import time
 import random,json
 from werkzeug import secure_filename
 from app import models,db
+from flask_login import LoginManager,login_required, login_user, logout_user
+from flask.ext.principal import Principal, Permission, RoleNeed
 
 root =  os.path.dirname(__file__)
-#path = os.path.join(root,'./static/odt/')
 path2 = os.path.join(root,'./static/users/')
-#UPLOAD_FOLDER = path
 ALLOWED_EXTENSIONS = set(['odt'])
-#app.config['UPLOAD_FOLDER'] = path
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.secret_key = 'some_secret'
-#temp = glob.glob(path)
 
+# flask-login
+login_manager = LoginManager()
+login_manager.setup_app(app)
+login_manager.login_view = "login"
 
 @app.route('/')
 @app.route('/index')
+@login_required
 def index():
     temp = os.listdir(os.path.join(root,'./static/users/%s/odt/' % session['user_name']))
     return render_template('index.html',temp = temp)
@@ -116,8 +119,10 @@ def login():
               session['logged_in'] = True
               session['user_name'] = user.username
               #render_template('index.html',)
+              login_user(user)
               global path1
               path1 = os.path.join(root,'./static/users/%s/odt/' % session['user_name'])
+              return redirect(url_for('index'))
           else:
               flash('wrong password!')
               return redirect(url_for('login'))
@@ -126,7 +131,12 @@ def login():
        return render_template('login.html')
 
 @app.route("/logout")
+@login_required
 def logout():
     session['logged_in'] = False
+    logout_user()
     return redirect(url_for('login'))
 
+@login_manager.user_loader
+def load_user(userid):
+    return models.User()
