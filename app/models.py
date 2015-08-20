@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 from flask_login import UserMixin
+from sqlalchemy.orm import relationship
 
 class User(UserMixin,db.Model):
     __tablename__ = 'users'
@@ -11,12 +12,11 @@ class User(UserMixin,db.Model):
     is_user = db.Column(db.Boolean(), default=False)
     signUp_date = db.Column(db.DateTime)
 
+    def __repr__(self):
+        return   "%d/%s/%s" % (self.id, self.username)
 
 class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     author = relationship(User)
     content = db.Column(db.Text)
-
-    def __repr__(self):
-        return   "%d/%s/%s" % (self.id, self.username)

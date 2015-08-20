@@ -8,7 +8,7 @@ import random,json
 from werkzeug import secure_filename
 from app import models,db
 from flask_login import LoginManager,login_required, login_user, logout_user
-from flask.ext.principal import Principal, Permission, RoleNeed
+#from flask_principal import Principal, Identity, UserNeed, AnonymousIdentity, identity_loaded, RoleNeed
 
 root =  os.path.dirname(__file__)
 path2 = os.path.join(root,'./static/users/')
@@ -108,7 +108,7 @@ def signUpUser():
     for u in users:
         print(u.id,u.username)
     return json.dumps({'status':'OK','user':username,'pass':password});
-
+    return render_template('index.html')
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
