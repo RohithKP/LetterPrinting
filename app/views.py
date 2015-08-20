@@ -8,7 +8,7 @@ import random,json
 from werkzeug import secure_filename
 from app import models,db
 from flask_login import LoginManager,login_required, login_user, logout_user
-from flask.ext.principal import Principal, Permission, RoleNeed
+#from flask.ext.principal import Principal, Permission, RoleNeed
 
 root =  os.path.dirname(__file__)
 path2 = os.path.join(root,'./static/users/')
