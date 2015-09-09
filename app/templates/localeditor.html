@@ -18,10 +18,30 @@
     <script src="localfileeditor.js" type="text/javascript" charset="utf-8"></script>
      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <!-- editor: end -->
+      <script>
+function myFunction() {
+// $( "#webodfeditor-toolbar1" ).css("margin-top","-100px");
+$( "#webodfeditor-toolbar1" ).toggle();
+$("#editorContainer").toggleClass('button');
+// $('#cursor').focus();
+    $( ".webodf-caretOverlay" ).toggle();
+}
+      </script>
+      <style>
+          .button {
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+}
+          </style>
   </head>
 
   <body style="width:100%; height:100%; margin:0px; padding:0px" onload="createEditor();">
+    <a id="button" onclick="myFunction()" >EDIT</a>
     <div id="editorContainer" style="width:100%; height:100%; margin:0px; padding:0px">
+        <div style="z-index:999;width:100%;height:100%;"></div>
     </div>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   </body>
 </html>

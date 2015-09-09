@@ -1,13 +1,14 @@
 import os
 from app import app
-from flask import render_template,request, send_from_directory,url_for,redirect,flash,session
+from flask import render_template,request, send_from_directory,url_for,redirect,flash,session,g
 import sec
 import glob
 import time
 import random,json
 from werkzeug import secure_filename
 from app import models,db
-from flask_login import LoginManager,login_required, login_user, logout_user
+from flask_login import LoginManager,login_required, login_user, logout_user, current_user,current_app
+from flask.ext.principal import identity_changed,Identity, Principal, Permission, RoleNeed, identity_loaded,UserNeed
 
 root =  os.path.dirname(__file__)
 path2 = os.path.join(root,'./static/users/')
@@ -19,6 +20,19 @@ app.secret_key = 'some_secret'
 login_manager = LoginManager()
 login_manager.setup_app(app)
 login_manager.login_view = "login"
+login_manager.init_app(app)
+#flask principal
+principal =Principal()
+admin_permission= Permission(RoleNeed('admin'))
+principal.init_app(app)
+user = None
+
+
+@app.before_request
+def before_request():
+    g.user = None
+    if 'user_id' in session:
+       g.user = models.User.query.get(session['user_id'])
 
 @app.route('/')
 @app.route('/index')
@@ -98,37 +112,41 @@ def signUpUser():
     os.makedirs(path2+'/'+username+'/odt')
     os.makedirs(path2+'/'+username+'/out')
     os.makedirs(path2+'/'+username+'/json')
-    u = models.User(username=username, password=password)
+    user = models.User(username=username, password=password)
     db.session.add(u)
     db.session.commit()
     session['logged_in'] = True
-    session['user_id'] = u.username
+    session['user_id'] = user.id
+    session['user_name'] = user.username
+    login_user(user)
     users = models.User.query.all()
     for u in users:
         print(u.id,u.username)
-    return json.dumps({'status':'OK','user':username,'pass':password});
-    return render_template('index.html')
+    return redirect(url_for('login'))
 @app.route('/login', methods=['GET','POST'])
 def login():
-    if request.method == 'POST':
-          POST_USERNAME = request.form['username']
-          POST_PASSWORD = request.form['password']
-          if models.User.query.filter_by(username=POST_USERNAME,password=POST_PASSWORD).first():
-              user = models.User.query.filter_by(username=POST_USERNAME,password=POST_PASSWORD).first()
-              session['logged_in'] = True
-              session['user_name'] = user.username
-              #render_template('index.html',)
-              login_user(user)
-              global path1
-              path1 = os.path.join(root,'./static/users/%s/odt/' % session['user_name'])
-              return redirect(url_for('index'))
-          else:
-              flash('wrong password!')
-              return redirect(url_for('login'))
-          return redirect(url_for('index'))
-    else:
        return render_template('login.html')
-
+@app.route('/check', methods=['GET','POST'])
+def check():
+    POST_USERNAME = request.form['username']
+    POST_PASSWORD = request.form['password']
+    print request.args.get('username')
+    if models.User.query.filter_by(username=POST_USERNAME,password=POST_PASSWORD).first():
+       global user
+       user = models.User.query.filter_by(username=POST_USERNAME,password=POST_PASSWORD).first()
+       session['logged_in'] = True
+       session['user_name'] = user.username
+       session['user_id'] = user.id
+       #render_template('index.html',)
+       login_user(user)
+       identity_changed.send(current_app._get_current_object(),identity=Identity(user.id))
+       global path1
+       path1 = os.path.join(root,'./static/users/%s/odt/' % session['user_name'])
+       return redirect(url_for('index'))
+    else:
+       flash('wrong password!')
+       return redirect(url_for('login'))
+    return redirect(url_for('index'))
 @app.route("/logout")
 @login_required
 def logout():
@@ -137,5 +155,28 @@ def logout():
     return redirect(url_for('login'))
 
 @login_manager.user_loader
-def load_user(userid):
-    return models.User()
+def load_user(user_id):
+        return models.User()
+
+@app.route('/admin',methods=['GET'])
+@admin_permission.require(http_exception=403)
+def admin():
+    return render_template('admin.html')
+
+@app.errorhandler(403)
+def page_not_found(e):
+    session['redirected_from'] = request.url
+    return render_template('denied.html')
+
+@identity_loaded.connect_via(app)
+def on_identity_loaded(sender,identity):
+    identity.user = user
+    print "efe"
+    if hasattr(user,'id'):
+       print user.id
+       identity.provides.add(UserNeed(user.id))
+
+    if hasattr(user,'roles'):
+       for role in user.roles:
+           print role.name
+           identity.provides.add(RoleNeed(role.name))
