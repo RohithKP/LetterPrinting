@@ -1,0 +1,24 @@
+ <form action="{{url_for('create')}}" method=post enctype=multipart/form-data>
+<input type="file" id="browse" name="file" style="display: none" onChange="Handlechange();"/>
+<input type="text" class="form-control" id="projectname" name="projectname" placeholder="" required >
+<input type="text" class="form-control" id="filename" name="zxc" placeholder="Select a template" required >
+<input type="button" class="btn btn-primary btn-sm" value="Browse" id="fakeBrowse" onclick="HandleBrowseClick();"/>
+<input type="submit" value="Upload">
+</form>
+
+
+    <script type="text/javascript">
+        function HandleBrowseClick()
+        {
+            var fileinput = document.getElementById("browse");
+            fileinput.click();
+        }
+
+        function Handlechange()
+        {
+            var fileinput = document.getElementById("browse");
+            var textinput = document.getElementById("filename");
+            textinput.value = fileinput.value;
+        }
+
+    </script>

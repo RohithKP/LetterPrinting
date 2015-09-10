@@ -58,7 +58,7 @@ function createEditor() {
         // If the URL has a fragment (#...), try to load the file it represents
         //pos = docUrl.indexOf('%23')+3;
         if ($_GET.tname) {
-            docUrl = "../users/"+$_GET.username+"/odt/"+$_GET.tname;
+            docUrl = "../users/"+$_GET.username+"/"+$_GET.projectname+"/odt/"+$_GET.tname;
             console.log(docUrl);
         } else {
             docUrl = "welcome.odt";

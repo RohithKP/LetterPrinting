@@ -81,18 +81,10 @@
         <a href="/login">login</a>
         {% endif %}
      <div>
-        <div id="" style="padding:4px 0px;">
-<!--         <iframe id="frame" src = "#" width='724' height='600' allowfullscreen webkitallowfullscreen></iframe> -->
-         <iframe id="aframe" src = "http://localhost:5000/wodo/?tname=test_template.odt&username={{g.user.username}}" width='810' height='600' ></iframe>
-        <form method="get" action="{{url_for('wodo')}}" id="wodo">
-            <input id="subm" type="hidden" name="tname" value='test_template.odt'>
-            <input id="user" type="hidden" name="username" value=''>
-            <a id="btn2" type="button" href="#" onclick="submit2()"> Edit</a>
-        </form>
-        </div>
+         <iframe id="aframe" src = "http://localhost:5000/wodo/?tname=test_template.odt&username={{g.user.username}}" width='764' height='600' ></iframe>
     </div>
-    <script src="{{url_for('static',filename='webodf.js')}}" type="text/javascript" charset="utf-8"></script>
-
+<!--     <script src="{{url_for('static',filename='webodf.js')}}" type="text/javascript" charset="utf-8"></script>
+ -->
     <script type="text/javascript" charset="utf-8">
         //var tempname;
         var user = "{{session['user_name']}}";

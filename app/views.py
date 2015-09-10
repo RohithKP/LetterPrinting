@@ -38,8 +38,8 @@ def before_request():
 @app.route('/index')
 @login_required
 def index():
-    temp = os.listdir(os.path.join(root,'./static/users/%s/odt/' % session['user_name']))
-    return render_template('index.html',temp = temp)
+    temp = os.listdir(os.path.join(root,'./static/users/%s/%s/odt/' % (session['user_name'],session['projectname'])))
+    return render_template('dashboard.html',temp = temp)
 
 @app.route('/gen/')
 #@app.route('/gen/<templatename>')
@@ -57,7 +57,6 @@ def gen():
 
 @app.route('/wodo/')
 def wodo():
-     global tname
      tname = request.args.get('tname')
      return render_template('localeditor.html')
   #  return send_from_directory(wpath, 'texteditor.html')
@@ -97,8 +96,11 @@ def uploaded_file(filename):
 def save():
     if request.method == 'POST':
         file = request.files['data']
-        file.save(os.path.join(os.path.join(root,'./static/users/%s/odt/' % session['user_name']), tname))
-        return redirect(url_for('index'))
+        filename =  request.form['tname']
+        projectname =  request.form['projectname']
+        os.path.join(os.path.join(root,'./static/users/%s/%s/odt/' % (session['user_name'],projectname)), filename)
+        file.save(os.path.join(os.path.join(root,'./static/users/%s/%s/odt/' % (session['user_name'],projectname)), filename))
+    return "saved"
 
 @app.route('/signup/')
 def signUp():
@@ -180,3 +182,28 @@ def on_identity_loaded(sender,identity):
        for role in user.roles:
            print role.name
            identity.provides.add(RoleNeed(role.name))
+@app.route('/preview')
+def preview():
+    projectname = request.args.get('projectname')
+    filename=request.args.get('templatename')
+    return render_template('preview.html',projectname=projectname,filename=filename)
+
+@app.route('/createproject/', methods=['GET','POST'])
+def create():
+    projectname = request.form['projectname']
+    os.makedirs(path2+'/'+g.user.username+'/'+projectname)
+    os.makedirs(path2+'/'+g.user.username+'/'+projectname+'/odt')
+    os.makedirs(path2+'/'+g.user.username+'/'+projectname+'/out')
+    os.makedirs(path2+'/'+g.user.username+'/'+projectname+'/json')
+    f = open(path2+'/'+g.user.username+'/'+projectname+'/url.txt', 'w')
+    f.write('aas')
+    file = request.files['file']
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(os.path.join(root,'./static/users/%s/%s/odt/' % (session['user_name'],projectname)), filename))
+        return redirect(url_for('preview',projectname=projectname,templatename=filename))
+    return 'folders created'
+
+@app.route('/test')
+def test():
+    return render_template('test.html')

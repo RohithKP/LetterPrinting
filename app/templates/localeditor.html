@@ -19,16 +19,41 @@
      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <!-- editor: end -->
       <script>
-function myFunction() {
-// $( "#webodfeditor-toolbar1" ).css("margin-top","-100px");
-$( "#webodfeditor-toolbar1" ).toggle();
-$("#editorContainer").toggleClass('button');
-// $('#cursor').focus();
-    $( ".webodf-caretOverlay" ).toggle();
-}
+            var positiveMargin = true;
+            function myFunction() {
+            // $( "#webodfeditor-toolbar1" ).css("margin-top","-100px");
+            // $( "#webodfeditor-toolbar1" ).toggle();
+            $("#editorContainer").toggleClass('editable');
+            $( ".webodf-caretOverlay" ).toggle();
+            if (!positiveMargin) {
+                    var marginTop = "0px";
+                    var Top = "54px";
+                    positiveMargin = true;
+                }
+                else {
+                    var marginTop = "-80px";
+                    var Top = "0px";
+                    positiveMargin = false;
+                }
+                $('#webodfeditor-toolbar1').animate({
+                           marginTop: marginTop
+                           }, {
+                           duration: 1000,
+                           complete: function () {
+                           }
+                         });
+                $('#webodfeditor-canvascontainer1').animate({
+                           top:Top
+                           }, {
+                           duration: 1000,
+                           complete: function () {
+                           }
+                         });
+            }
+
       </script>
       <style>
-          .button {
+          .editable {
         -moz-user-select: none;
         -khtml-user-select: none;
         -webkit-user-select: none;
@@ -37,9 +62,9 @@ $("#editorContainer").toggleClass('button');
           </style>
   </head>
 
-  <body style="width:100%; height:100%; margin:0px; padding:0px" onload="createEditor();">
-    <a id="button" onclick="myFunction()" >EDIT</a>
-    <div id="editorContainer" style="width:100%; height:100%; margin:0px; padding:0px">
+  <body style="width:100%; height:100%; margin:0px; padding:0px;position:relative;" onload="createEditor();">
+    <button id="button" onclick="myFunction()" style="position:absolute;top:30px;right:0;z-index:300;background-color:aquamarine;">EDIT</button>
+    <div id="editorContainer" style="width:100%; height:100%; margin:0px; padding:0px;">
         <div style="z-index:999;width:100%;height:100%;"></div>
     </div>
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

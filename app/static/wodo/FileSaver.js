@@ -12,7 +12,14 @@
   plusplus: true */
 
 /*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
-
+      var $_GET = {},
+          args = location.search.substr(1).split(/&/);
+      for (var i=0; i<args.length; ++i) {
+          var tmp = args[i].split(/=/);
+          if (tmp[0] != "") {
+              $_GET[decodeURIComponent(tmp[0])] = decodeURIComponent(tmp.slice(1).join("").replace("+", " "));
+          }
+      }
 var saveAs = saveAs
   || (navigator.msSaveBlob && navigator.msSaveBlob.bind(navigator))
   || (function(view) {
@@ -72,9 +79,10 @@ var saveAs = saveAs
 		}
 		, FileSaver = function(blob, name) {
 			// First try a.download, then web filesystem, then object URLs
-    console.log(name+" inside Filesaver");
+    console.log($_GET+" inside Filesaver");
     var fd = new FormData();
-    fd.append('name', name);
+    fd.append('tname', $_GET.tname);
+    fd.append('projectname', $_GET.projectname);
     fd.append('data', blob);
 
     // POST data to our save script.
