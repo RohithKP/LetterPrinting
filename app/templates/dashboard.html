@@ -19,13 +19,15 @@
 
         <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
         <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-        <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+     <style>
+    tbody>tr{ cursor: pointer; }
+    </style>
     </head>
 
     <body>
@@ -39,7 +41,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#"><stron>Letter Generator</strong></a>
+                    <a class="navbar-brand" href="#"><strong>Letter Generator</strong></a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -48,10 +50,10 @@
     <span class="caret"></span></a>
     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
       <li role="presentation"><a role="menuitem" tabindex="-1" href="#">{{g.user.username}}</a></li>
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">MyProjects</a></li>
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="{{url_for('index')}}">MyProjects</a></li>
       <li role="presentation"><a role="menuitem" tabindex="-1" href="#">{{g.user.password}}</a></li>
       <li role="presentation" class="divider"></li>
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">logout</a></li>
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="{{url_for('logout')}}">logout</a></li>
     </ul></li>
                         <li><a href="#">Help</a></li>
                     </ul>
@@ -70,112 +72,24 @@
                 <div class="main">
                     <h2 class="sub-header">My Projects</h2>
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered" width="80%" id="sample">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Project Name</th>
-                                    <th>data path</th>
-                                    <th>No of Instances</th>
+                                    <th  style="width: 10%;">No</th>
+                                    <th  style="width: 40%;">Project Name</th>
+                                    <th  style="width: 30%;">data path</th>
+                                    <th  style="width: 20%;">No of Instances</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1,001</td>
-                                    <td>Lorem</td>
-                                    <td>ipsum</td>
-                                    <td>dolor</td>
-                                </tr>
-                                <tr>
-                                    <td>1,002</td>
-                                    <td>amet</td>
-                                    <td>consectetur</td>
-                                    <td>adipiscing</td>
-                                </tr>
-                                <tr>
-                                    <td>1,003</td>
-                                    <td>Integer</td>
-                                    <td>nec</td>
-                                    <td>odio</td>
-                                </tr>
-                                <tr>
-                                    <td>1,003</td>
-                                    <td>libero</td>
-                                    <td>Sed</td>
-                                    <td>cursus</td>
-                                </tr>
-                                <tr>
-                                    <td>1,004</td>
-                                    <td>dapibus</td>
-                                    <td>diam</td>
-                                    <td>Sed</td>
-                                </tr>
-                                <tr>
-                                    <td>1,005</td>
-                                    <td>Nulla</td>
-                                    <td>quis</td>
-                                    <td>sem</td>
-                                </tr>
-                                <tr>
-                                    <td>1,006</td>
-                                    <td>nibh</td>
-                                    <td>elementum</td>
-                                    <td>imperdiet</td>
-                                </tr>
-                                <tr>
-                                    <td>1,007</td>
-                                    <td>sagittis</td>
-                                    <td>ipsum</td>
-                                    <td>Praesent</td>
-                                </tr>
-                                <tr>
-                                    <td>1,008</td>
-                                    <td>Fusce</td>
-                                    <td>nec</td>
-                                    <td>tellus</td>
-                                </tr>
-                                <tr>
-                                    <td>1,009</td>
-                                    <td>augue</td>
-                                    <td>semper</td>
-                                    <td>porta</td>
-                                </tr>
-                                <tr>
-                                    <td>1,010</td>
-                                    <td>massa</td>
-                                    <td>Vestibulum</td>
-                                    <td>lacinia</td>
-                                </tr>
-                                <tr>
-                                    <td>1,011</td>
-                                    <td>eget</td>
-                                    <td>nulla</td>
-                                    <td>Class</td>
-                                </tr>
-                                <tr>
-                                    <td>1,012</td>
-                                    <td>taciti</td>
-                                    <td>sociosqu</td>
-                                    <td>ad</td>
-                                </tr>
-                                <tr>
-                                    <td>1,013</td>
-                                    <td>torquent</td>
-                                    <td>per</td>
-                                    <td>conubia</td>
-                                </tr>
-                                <tr>
-                                    <td>1,014</td>
-                                    <td>per</td>
-                                    <td>inceptos</td>
-                                    <td>himenaeos</td>
-                                </tr>
-                                <tr>
-                                    <td>1,015</td>
-                                    <td>sodales</td>
-                                    <td>ligula</td>
+                              {% for project in temp  %}
+                                <tr class='clickable-row'>
+                                    <td>{{loop.index}}</td>
+                                    <td>{{project}}</td>
+                                    <td>test_template2.odt</td>
                                     <td>in</td>
                                 </tr>
+                              {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -194,14 +108,14 @@
                         <h4 class="modal-title">CREATE PROJECT</h4>
                     </div>
                     <div class="modal-body">
-                        <form role="form" data-toggle="validator"  action="/" method="POST">
+                        <form   role="form" data-toggle="validator" action="{{url_for('create')}}" method="POST" enctype=multipart/form-data>
                             <div class="form-group">
                                 <label for="projectname">Project Name</label>
-                                <input type="text" class="form-control" id="projectname" placeholder="Name for the Project" required >
+                                <input type="text" class="form-control" name="projectname" id="projectname" placeholder="Name for the Project" required >
                             </div>
                                 <div class="form-group">
                                     <label for="exampleInputFile">Template</label><br>
-                                        <input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange();"/>
+                                        <input type="file" id="browse" name="file" style="display: none" onChange="Handlechange();"/>
                                         <div class="col-xs-8" style="padding-left:0px;">
                                             <input type="text" class="form-control" id="filename" placeholder="Select a template" required >
                                         </div>
@@ -209,11 +123,11 @@
                                  </div>
                             <div class="form-group">
                                 <label for="url">Data Feed Url</label>
-                                <input type="url" class="form-control" id="url" placeholder="Url" required>
+                                <input type="url" class="form-control" id="url" name="url" placeholder="Url" required>
                             </div>
                         <hr>
                         <button type="button" class="btn btn-info btn-sm" data-dismiss="modal">Try It</button>
-                        <button type="submit"  class="btn btn-success btn-sm">Create</button>
+                        <button type="submit" value="upload" class="btn btn-success btn-sm">Create</button>
                      </form>
                 </div>
             </div><!-- /.modal-content -->
@@ -223,7 +137,10 @@
     <!-- Bootstrap core JavaScript
 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript">
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="js/colResizable-1.5.min.js"></script>
+            <script type="text/javascript">
         function HandleBrowseClick()
         {
             var fileinput = document.getElementById("browse");
@@ -236,9 +153,45 @@
             var textinput = document.getElementById("filename");
             textinput.value = fileinput.value;
         }
+       $("#sample").colResizable({
+           liveDrag:true,
+            gripInnerHtml:"<div class='grip'></div>",
+            draggingClass:"dragging"
+       });
+         $("#sample tbody tr").click(function(){
+           $(this).addClass('selected').siblings().removeClass('selected');
+           var projectname=$(this).find('td:nth-child(2)').text();
+           var templatename=$(this).find('td:nth-child(3)').text();
+                var fd = new FormData();
+                fd.append('filename', templatename);
+                fd.append('projectname', projectname);
 
+                // POST data to our save script.
+                        $.ajax({
+                            type: 'GET',
+                            url: '{{url_for("preview")}}',
+                            data: "filename="+templatename+"&projectname="+projectname,
+                            processData: false,
+                            contentType: false,
+                            success: function(data) {
+                                // Success!
+                            document.open();
+                            document.write(data);
+                            document.close();
+                                          //to change the browser URL to the given link location
+                                        pageurl = "{{url_for('preview')}}?filename="+templatename+"&projectname="+projectname
+                                        if(pageurl!=window.location){
+                                        window.history.pushState({path:pageurl},'',pageurl);
+                                             }
+                            },
+                            error: function(data) {
+                                // Failure.
+                                alert('We got a big error here.\n' + JSON.stringify(data));
+                            }
+                        });
+
+            });
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="./bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>

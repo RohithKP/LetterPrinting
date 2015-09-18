@@ -9,6 +9,7 @@ from werkzeug import secure_filename
 from app import models,db
 from flask_login import LoginManager,login_required, login_user, logout_user, current_user,current_app
 from flask.ext.principal import identity_changed,Identity, Principal, Permission, RoleNeed, identity_loaded,UserNeed
+import requests
 
 root =  os.path.dirname(__file__)
 path2 = os.path.join(root,'./static/users/')
@@ -38,22 +39,22 @@ def before_request():
 @app.route('/index')
 @login_required
 def index():
-    temp = os.listdir(os.path.join(root,'./static/users/%s/%s/odt/' % (session['user_name'],session['projectname'])))
+    temp = os.listdir(os.path.join(root,'./static/users/%s/' % session['user_name']))
+    print temp
     return render_template('dashboard.html',temp = temp)
 
-@app.route('/gen/')
-#@app.route('/gen/<templatename>')
+@app.route('/gen/',methods=['GET', 'POST'])
 def gen():
-    templatename = request.args.get('templatename')
-    i = request.args.get('jsonid')
-    jpath = request.args.get('jsonpath')
-    r = int(i.encode('UTF8'))
-    sec.renderx(templatename,r,session['user_name'])
-    return render_template('out.html',templatename = str(r)+templatename)
+    print "asdasd"
+    templatename = request.form['templatename']
+    jsonid = request.form['jsonid']
+    jsonpath = request.form['jsonpath']
+    projectname = request.form['projectname']
+    r = int(jsonid.encode('UTF8'))
+    sec.renderx(templatename,r,session['user_name'],projectname,jsonpath)
+    return render_template('out.html',templatename = str(r)+templatename,projectname=projectname)
 
-#@app.route('/sample/<templatename>')
-#def ren(templatename):
-#    return render_template('ren.html',temp=temp,templatename=templatename)
+
 
 @app.route('/wodo/')
 def wodo():
@@ -111,9 +112,6 @@ def signUpUser():
     username =  request.form['username'];
     password = request.form['password'];
     os.makedirs(path2+'/'+username)
-    os.makedirs(path2+'/'+username+'/odt')
-    os.makedirs(path2+'/'+username+'/out')
-    os.makedirs(path2+'/'+username+'/json')
     user = models.User(username=username, password=password)
     db.session.add(u)
     db.session.commit()
@@ -125,6 +123,7 @@ def signUpUser():
     for u in users:
         print(u.id,u.username)
     return redirect(url_for('login'))
+
 @app.route('/login', methods=['GET','POST'])
 def login():
        return render_template('login.html')
@@ -182,26 +181,39 @@ def on_identity_loaded(sender,identity):
        for role in user.roles:
            print role.name
            identity.provides.add(RoleNeed(role.name))
-@app.route('/preview')
+
+@app.route('/preview',methods=['GET','POST'])
 def preview():
-    projectname = request.args.get('projectname')
-    filename=request.args.get('templatename')
-    return render_template('preview.html',projectname=projectname,filename=filename)
+    projectname =  request.args.get('projectname')
+    print projectname
+    filename=request.args.get('filename')
+    print filename
+    f = open(path2+'/'+g.user.username+'/'+projectname+'/url.txt', 'r')
+    url = f.readline()
+    try:
+        r = requests.get(url)
+    except requests.ConnectionError:
+        return "Connection Error"
+    rows_json = json.loads(r.text)
+    print rows_json
+    addr = rows_json[0]
+    return render_template('preview.html',projectname=projectname,filename=filename,url=url,addr=addr)
 
 @app.route('/createproject/', methods=['GET','POST'])
 def create():
     projectname = request.form['projectname']
+    url = request.form['url']
     os.makedirs(path2+'/'+g.user.username+'/'+projectname)
     os.makedirs(path2+'/'+g.user.username+'/'+projectname+'/odt')
     os.makedirs(path2+'/'+g.user.username+'/'+projectname+'/out')
     os.makedirs(path2+'/'+g.user.username+'/'+projectname+'/json')
     f = open(path2+'/'+g.user.username+'/'+projectname+'/url.txt', 'w')
-    f.write('aas')
+    f.write(url)
     file = request.files['file']
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(os.path.join(root,'./static/users/%s/%s/odt/' % (session['user_name'],projectname)), filename))
-        return redirect(url_for('preview',projectname=projectname,templatename=filename))
+        return redirect(url_for('preview',projectname=projectname,filename=filename))
     return 'folders created'
 
 @app.route('/test')

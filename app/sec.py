@@ -1,26 +1,27 @@
 import os
 import json
 from secretary import Renderer
+import requests
 
-def renderx(x,r,user):
+def renderx(x,n,user,projectname,jsonpath):
     root =  os.path.dirname(__file__)
-    base = os.path.join(root,'./static/users/'+user+'/')
+    base = os.path.join(root,'./static/users/%s/%s/' %(user,projectname))
     jdata = os.path.join(base,'./json/data.json')
-    with open(jdata) as data_file:
-         address = json.load(data_file)
-    n = r
-#    i = 0;
-#    for a in address['address']:
-	#pprint(address['address'][i])
-    addr = address['address'][n]
-#        i+=1
-    print(addr)
+    try:
+        r = requests.get(jsonpath)
+    except requests.ConnectionError:
+        return "Connection Error"
+    rows_json = json.loads(r.text)
+    print rows_json
+    print n
+    addr = rows_json[n]
+    for key in addr: print key
     engine = Renderer()
     template = os.path.join(base, './odt/'+x)
 # Configure custom application filters
     result = engine.render(template,address=addr )
     outf = os.path.join(base,'./out/')
-    fname = os.path.join(outf,str(r)+x)
+    fname = os.path.join(outf,str(n)+x)
     output = open(fname, 'wb')
     output.write(result)
 #for testing purpose
