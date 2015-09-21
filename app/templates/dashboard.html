@@ -17,14 +17,6 @@
         <!-- Custom styles for this template -->
         <link href="dashboard.css" rel="stylesheet">
 
-        <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-        <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
      <style>
     tbody>tr{ cursor: pointer; }
     </style>
@@ -72,12 +64,11 @@
                 <div class="main">
                     <h2 class="sub-header">My Projects</h2>
                     <div class="table-responsive">
-                        <table class="table table-bordered" width="80%" id="sample">
+                        <table class="table table-hover"  id="sample">
                             <thead>
                                 <tr>
                                     <th  style="width: 10%;">No</th>
                                     <th  style="width: 40%;">Project Name</th>
-                                    <th  style="width: 30%;">data path</th>
                                     <th  style="width: 20%;">No of Instances</th>
                                 </tr>
                             </thead>
@@ -86,7 +77,6 @@
                                 <tr class='clickable-row'>
                                     <td>{{loop.index}}</td>
                                     <td>{{project}}</td>
-                                    <td>test_template2.odt</td>
                                     <td>in</td>
                                 </tr>
                               {% endfor %}
@@ -165,31 +155,7 @@
                 var fd = new FormData();
                 fd.append('filename', templatename);
                 fd.append('projectname', projectname);
-
-                // POST data to our save script.
-                        $.ajax({
-                            type: 'GET',
-                            url: '{{url_for("preview")}}',
-                            data: "filename="+templatename+"&projectname="+projectname,
-                            processData: false,
-                            contentType: false,
-                            success: function(data) {
-                                // Success!
-                            document.open();
-                            document.write(data);
-                            document.close();
-                                          //to change the browser URL to the given link location
-                                        pageurl = "{{url_for('preview')}}?filename="+templatename+"&projectname="+projectname
-                                        if(pageurl!=window.location){
-                                        window.history.pushState({path:pageurl},'',pageurl);
-                                             }
-                            },
-                            error: function(data) {
-                                // Failure.
-                                alert('We got a big error here.\n' + JSON.stringify(data));
-                            }
-                        });
-
+               window.location.assign("{{url_for('preview')}}?filename="+templatename+"&projectname="+projectname);
             });
     </script>
     <script src="./bootstrap/js/bootstrap.min.js"></script>

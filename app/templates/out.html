@@ -15,7 +15,7 @@
                   }
                   else{
                      console.log(tempname);
-                      odfcanvas.load("{{url_for('static',filename='users/')}}{{g.user.username}}/{{projectname}}/out/"+tempname);
+                      odfcanvas.load("{{url_for('static',filename='users/')}}{{g.user.username}}/{{projectname}}/out/"+tempname+"?"+Math.floor((Math.random() * 100) + 1));
                   }
                 }
                 window.setTimeout(init('{{templatename}}'), 0);

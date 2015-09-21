@@ -43,16 +43,16 @@ def index():
     print temp
     return render_template('dashboard.html',temp = temp)
 
-@app.route('/gen/',methods=['GET', 'POST'])
-def gen():
+@app.route('/try/',methods=['GET', 'POST'])
+def tryit():
     print "asdasd"
     templatename = request.form['templatename']
     jsonid = request.form['jsonid']
-    jsonpath = request.form['jsonpath']
+    jsonpath = request.form['jsonpath']+jsonid
     projectname = request.form['projectname']
-    r = int(jsonid.encode('UTF8'))
-    sec.renderx(templatename,r,session['user_name'],projectname,jsonpath)
-    return render_template('out.html',templatename = str(r)+templatename,projectname=projectname)
+#     r = int(jsonid.encode('UTF8'))
+    sec.renderx(templatename,session['user_name'],projectname,jsonpath)
+    return render_template('out.html',templatename = templatename,projectname=projectname)
 
 
 
@@ -186,18 +186,17 @@ def on_identity_loaded(sender,identity):
 def preview():
     projectname =  request.args.get('projectname')
     print projectname
-    filename=request.args.get('filename')
-    print filename
+    filename = [f for f in os.listdir(path2+'/'+g.user.username+'/'+projectname+'/odt/') if f.endswith('.odt')]
+    print filename[0]
     f = open(path2+'/'+g.user.username+'/'+projectname+'/url.txt', 'r')
     url = f.readline()
     try:
         r = requests.get(url)
+        rows_json = json.loads(r.text)
+        addr = rows_json
     except requests.ConnectionError:
         return "Connection Error"
-    rows_json = json.loads(r.text)
-    print rows_json
-    addr = rows_json[0]
-    return render_template('preview.html',projectname=projectname,filename=filename,url=url,addr=addr)
+    return render_template('preview.html',projectname=projectname,filename=filename[0],url=url,addr=addr)
 
 @app.route('/createproject/', methods=['GET','POST'])
 def create():
@@ -213,9 +212,19 @@ def create():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(os.path.join(root,'./static/users/%s/%s/odt/' % (session['user_name'],projectname)), filename))
-        return redirect(url_for('preview',projectname=projectname,filename=filename))
-    return 'folders created'
+#         return redirect(url_for('preview',projectname=projectname,filename=filename))
+        return redirect(url_for('index'))
+    return 'Error creating project'
 
 @app.route('/test')
 def test():
     return render_template('test.html')
+
+@app.route('/updateurl/', methods=['GET','POST'])
+def updateurl():
+    projectname = request.form['projectname']
+    url = request.form['url']
+    f = open(path2+'/'+g.user.username+'/'+projectname+'/url.txt', 'w')
+    f.write(url)
+    return 'url updated'
+
