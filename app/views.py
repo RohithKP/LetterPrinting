@@ -1,6 +1,6 @@
 import os
 from app import app
-from flask import render_template,request, send_from_directory,url_for,redirect,flash,session,g
+from flask import render_template,request, send_from_directory,url_for,redirect,flash,session,g,flash
 import sec
 import glob
 import time
@@ -10,6 +10,7 @@ from app import models,db
 from flask_login import LoginManager,login_required, login_user, logout_user, current_user,current_app
 from flask.ext.principal import identity_changed,Identity, Principal, Permission, RoleNeed, identity_loaded,UserNeed
 import requests
+
 
 root =  os.path.dirname(__file__)
 path2 = os.path.join(root,'./static/users/')
@@ -45,16 +46,17 @@ def index():
 
 @app.route('/try/',methods=['GET', 'POST'])
 def tryit():
-    print "asdasd"
     templatename = request.form['templatename']
     jsonid = request.form['jsonid']
     jsonpath = request.form['jsonpath']+jsonid
     projectname = request.form['projectname']
-#     r = int(jsonid.encode('UTF8'))
-    sec.renderx(templatename,session['user_name'],projectname,jsonpath)
-    return render_template('out.html',templatename = templatename,projectname=projectname)
+    x = sec.renderx(templatename,session['user_name'],projectname,jsonpath)
+    if x == -1:
+       return 'error'
+    else:   
+       return render_template('out.html',templatename = templatename,projectname=projectname)
 
-
+# render_template('out.html',templatename = templatename,projectname=projectname)
 
 @app.route('/wodo/')
 def wodo():
@@ -190,14 +192,18 @@ def preview():
     print filename[0]
     f = open(path2+'/'+g.user.username+'/'+projectname+'/url.txt', 'r')
     url = f.readline()
+    jsonid = f.readline()
     try:
-        r = requests.get(url)
-        rows_json = json.loads(r.text)
-        addr = rows_json
-    except requests.ConnectionError:
-        return "Connection Error"
-    return render_template('preview.html',projectname=projectname,filename=filename[0],url=url,addr=addr)
+        r = requests.get(url+jsonid)
+        addr = json.loads(r.text)
+    except :
+        flash('json cannot be loaded from the url')
+        return render_template('preview.html',projectname=projectname,filename=filename[0],url=url,jsonid=jsonid)
+   
+    return render_template('preview.html',projectname=projectname,filename=filename[0],url=url,addr=addr,jsonid=jsonid)
 
+         
+        
 @app.route('/createproject/', methods=['GET','POST'])
 def create():
     projectname = request.form['projectname']
@@ -216,15 +222,14 @@ def create():
         return redirect(url_for('index'))
     return 'Error creating project'
 
-@app.route('/test')
-def test():
-    return render_template('test.html')
 
 @app.route('/updateurl/', methods=['GET','POST'])
 def updateurl():
     projectname = request.form['projectname']
     url = request.form['url']
+    jsonid = request.form['jsonid']
     f = open(path2+'/'+g.user.username+'/'+projectname+'/url.txt', 'w')
-    f.write(url)
+    f.write(url+'\n')
+    f.write(jsonid)
     return 'url updated'
 

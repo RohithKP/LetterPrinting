@@ -1,0 +1,10 @@
+#!/home/taiga/Documents/Templating/flask/bin/python2
+# EASY-INSTALL-ENTRY-SCRIPT: 'pyBarcode==0.7','console_scripts','pybarcode2'
+__requires__ = 'pyBarcode==0.7'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('pyBarcode==0.7', 'console_scripts', 'pybarcode2')()
+    )

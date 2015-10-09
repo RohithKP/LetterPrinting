@@ -3,22 +3,15 @@
     <title>Rendered Template</title>
 </head>
 <body>
-<div id="odf" ></div>
-    <script src="{{url_for('static',filename='webodf.js')}}" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" charset="utf-8">
-     function init(tempname) {
-              var odfelement = document.getElementById("odf"),
-                  odfcanvas = new odf.OdfCanvas(odfelement);
-                  if(typeof(tempname)=='undefined')
-                  {
-                     odfcanvas.load("{{url_for('static',filename='out/test_template.odt')}}");
-                  }
-                  else{
-                     console.log(tempname);
-                      odfcanvas.load("{{url_for('static',filename='users/')}}{{g.user.username}}/{{projectname}}/out/"+tempname+"?"+Math.floor((Math.random() * 100) + 1));
-                  }
-                }
-                window.setTimeout(init('{{templatename}}'), 0);
-    </script>
+
+<iframe src ="/ViewerJS/#{{url_for('static',filename='users/')}}{{g.user.username}}/{{projectname}}/out/{{templatename}}?"+new Date().valueOf() width='100%' height='100%' allowfullscreen webkitallowfullscreen> </iframe>
+
+
+<script src="{{url_for('static',filename='webodf.js')}}" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+  var odfelement = document.getElementById("odf"),
+  // odfcanvas = new odf.OdfCanvas(odfelement);
+  // odfcanvas.load("{{url_for('static',filename='users/')}}{{g.user.username}}/{{projectname}}/out/{{templatename}}?"+new Date().valueOf());
+</script>
 </body>
 </html>

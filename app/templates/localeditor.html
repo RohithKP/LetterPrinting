@@ -18,7 +18,23 @@
     <script src="localfileeditor.js" type="text/javascript" charset="utf-8"></script>
      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <!-- editor: end -->
-      <script>
+      <style>
+          .editable {
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+}
+          </style>
+  </head>
+
+  <body style="width:100%; height:100%; margin:0px; padding:0px;position:relative;" onload="createEditor();">
+    <button id="button" onclick="myFunction()" style="position:absolute;top:30px;right:0;z-index:300;background-color:aquamarine;">EDIT</button>
+    <div id="editorContainer" style="width:100%; height:100%; margin:0px; padding:0px;">
+        <div style="z-index:999;width:100%;height:100%;"></div>
+    </div>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+   <script>
             var positiveMargin = true;
             function myFunction() {
             $("#editorContainer").toggleClass('editable');
@@ -49,21 +65,5 @@
                          });
             }
       </script>
-      <style>
-          .editable {
-        -moz-user-select: none;
-        -khtml-user-select: none;
-        -webkit-user-select: none;
-        -o-user-select: none;
-}
-          </style>
-  </head>
-
-  <body style="width:100%; height:100%; margin:0px; padding:0px;position:relative;" onload="createEditor();">
-    <button id="button" onclick="myFunction()" style="position:absolute;top:30px;right:0;z-index:300;background-color:aquamarine;">EDIT</button>
-    <div id="editorContainer" style="width:100%; height:100%; margin:0px; padding:0px;">
-        <div style="z-index:999;width:100%;height:100%;"></div>
-    </div>
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  </body>
+    </body>
 </html>

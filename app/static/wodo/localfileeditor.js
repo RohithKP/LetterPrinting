@@ -190,7 +190,7 @@ function createEditor() {
 
         if (docUrl) {
             loadedFilename = docUrl;
-            editor.openDocumentFromUrl(docUrl+"?"+Math.floor((Math.random() * 100) + 1), startEditing);
+            editor.openDocumentFromUrl(docUrl+"?"+new Date().valueOf(), startEditing);
         }
     }
 
