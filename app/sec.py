@@ -3,12 +3,12 @@ import json
 from secretary import Renderer
 import requests
 import barcode
-from barcode.writer import ImageWriter
+import random
 
 def fnbarcode(barcod):
     ean = barcode.get('ean13',barcod)
     global imgpath
-    imgpath = ean.save('image')
+    imgpath = ean.save("/tmp/"+barcod)
     return imgpath
 
 def renderx(x,user,projectname,jsonpath):
@@ -25,6 +25,13 @@ def renderx(x,user,projectname,jsonpath):
     engine.environment.filters['fnbarcode'] = fnbarcode
     result = engine.render(template,data=addr)
     outf = os.path.join(base,'./out/')
-    fname = os.path.join(outf,x)
+    templatename = str(random.uniform(0,100))+x
+    fname = os.path.join(outf,templatename)
+    data = []
+    data.append(base)
+    data.append(fname)
+    data.append(templatename)
     output = open(fname, 'wb')
     output.write(result)
+    return data
+

@@ -7,3 +7,4 @@ import secretary
 
 db = SQLAlchemy(app)
 from app import views, models
+

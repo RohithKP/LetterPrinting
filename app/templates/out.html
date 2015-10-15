@@ -4,12 +4,12 @@
 </head>
 <body>
 
-<iframe src ="/ViewerJS/#{{url_for('static',filename='users/')}}{{g.user.username}}/{{projectname}}/out/{{templatename}}?"+new Date().valueOf() width='100%' height='100%' allowfullscreen webkitallowfullscreen> </iframe>
+<iframe id="frame" src ="" width='100%' height='100%' allowfullscreen webkitallowfullscreen> </iframe>
 
 
 <script src="{{url_for('static',filename='webodf.js')}}" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
-  var odfelement = document.getElementById("odf"),
+  document.getElementById("frame").src =  "/ViewerJS/#{{url_for('static',filename='users/')}}{{g.user.username}}/{{projectname}}/out/{{templatename}}?"+new Date().valueOf();
   // odfcanvas = new odf.OdfCanvas(odfelement);
   // odfcanvas.load("{{url_for('static',filename='users/')}}{{g.user.username}}/{{projectname}}/out/{{templatename}}?"+new Date().valueOf());
 </script>

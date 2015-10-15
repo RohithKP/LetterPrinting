@@ -10,6 +10,9 @@ from app import models,db
 from flask_login import LoginManager,login_required, login_user, logout_user, current_user,current_app
 from flask.ext.principal import identity_changed,Identity, Principal, Permission, RoleNeed, identity_loaded,UserNeed
 import requests
+from celery import Celery
+import task
+
 
 
 root =  os.path.dirname(__file__)
@@ -53,7 +56,7 @@ def tryit():
     x = sec.renderx(templatename,session['user_name'],projectname,jsonpath)
     if x == -1:
        return 'error'
-    else:   
+    else:
        return render_template('out.html',templatename = templatename,projectname=projectname)
 
 # render_template('out.html',templatename = templatename,projectname=projectname)
@@ -199,11 +202,11 @@ def preview():
     except :
         flash('json cannot be loaded from the url')
         return render_template('preview.html',projectname=projectname,filename=filename[0],url=url,jsonid=jsonid)
-   
+
     return render_template('preview.html',projectname=projectname,filename=filename[0],url=url,addr=addr,jsonid=jsonid)
 
-         
-        
+
+
 @app.route('/createproject/', methods=['GET','POST'])
 def create():
     projectname = request.form['projectname']
@@ -233,3 +236,36 @@ def updateurl():
     f.write(jsonid)
     return 'url updated'
 
+@app.route('/range/', methods=['GET','POST'])
+def rangeFetch():
+    templatename = request.form['templatename']
+    jsonid = request.form['jsonid']
+    jsonpath = request.form['jsonpath']+jsonid
+    projectname = request.form['projectname']
+    x = sec.renderx(templatename,session['user_name'],projectname,jsonpath)
+    if x == -1:
+       return 'error'
+    uri="http://localhost:4000/fetchRange/"
+    data = {"start":"1", "end":"2"}
+    headers = {'Content-Type': 'application/json'}
+    payload = json.dumps(data)
+    r = requests.post(uri, data=payload,headers=headers)
+    jsonrows = json.loads(r.text)
+    return str(json.loads(jsonrows['1']))
+
+@app.route('/database')
+def database():
+    result = db.engine.execute("select * from users")
+    for r in result :
+        print r.username
+    return "result.username"
+
+@app.route('/generate',methods=['GET','POST'])
+def gen():
+    templatename = request.form['templatename']
+    jsonid = request.form['jsonid']
+    jsonpath = request.form['jsonpath']
+    projectname = request.form['projectname']
+    range_arr = [0,3]
+    task.generate.delay(templatename,jsonpath,projectname,session['user_name'],range_arr)
+    return "generating letters"
