@@ -12,8 +12,8 @@ from flask.ext.principal import identity_changed,Identity, Principal, Permission
 import requests
 from celery import Celery
 import task
-
-
+import multiprocessing
+from subprocess import Popen,PIPE
 
 root =  os.path.dirname(__file__)
 path2 = os.path.join(root,'./static/users/')
@@ -242,11 +242,11 @@ def rangeFetch():
     jsonid = request.form['jsonid']
     jsonpath = request.form['jsonpath']+jsonid
     projectname = request.form['projectname']
-    x = sec.renderx(templatename,session['user_name'],projectname,jsonpath)
-    if x == -1:
-       return 'error'
+#     x = sec.renderx(templatename,session['user_name'],projectname,jsonpath)
+#     if x == -1:
+#        return 'error'
     uri="http://localhost:4000/fetchRange/"
-    data = {"start":"1", "end":"2"}
+    data = {"start":"1", "end":"3"}
     headers = {'Content-Type': 'application/json'}
     payload = json.dumps(data)
     r = requests.post(uri, data=payload,headers=headers)
@@ -266,6 +266,35 @@ def gen():
     jsonid = request.form['jsonid']
     jsonpath = request.form['jsonpath']
     projectname = request.form['projectname']
-    range_arr = [0,3]
-    task.generate.delay(templatename,jsonpath,projectname,session['user_name'],range_arr)
-    return "generating letters"
+    limit = requests.get(jsonpath+"limit/")
+    block = 3
+    ul = int(limit.text)
+    remainder = ul%block
+    for i in range(1,ul-remainder,block):
+        print i
+        arr=[]
+        arr.append(i)
+        arr.append(i+block)
+        print arr
+        task.generate.delay(templatename,jsonpath,projectname,session['user_name'],arr)
+
+    if remainder != 0:
+        start = ul-remainder
+        arr = []
+        arr.append(start+1)
+        arr.append(ul+1)
+        print arr
+        print  task.generate.delay(templatename,jsonpath,projectname,session['user_name'],arr)
+
+    return "limit.text"
+
+@app.route('/listener')
+def listener():
+     n = multiprocessing.cpu_count()
+     err = []
+     for i in range(0,n):
+        p = Popen('unoconv --listener -p  222'+str(i),shell=True,stdout=PIPE,stderr=PIPE)
+        error = p.communicate()
+        err.append(str(error)+str(i))
+     return str(err)
+
