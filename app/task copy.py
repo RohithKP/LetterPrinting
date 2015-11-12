@@ -9,8 +9,6 @@ import random
 import requests
 import json
 from billiard import current_process
-root =  os.path.dirname(__file__)
-path = os.path.join(root,'./static/users/')
 
 """
 check : Batch processing of pdfs
@@ -50,21 +48,14 @@ def generate(templatename,jsonpath,projectname,user,arr=[]):
 def render(templatename,data,projectname,user):
          print "render was called"+str(current_process().index)
          odtout =  sec.renderx(templatename,user,projectname,data)
-#          if os.path.isfile(str(odtout[1])):
-#               pdfgen.delay(odtout,user,projectname)
-@celery_app.task(name='pdfsch',queue='pdfsch')
-def pdfgensch(user,projectname):
-        path2 = os.path.join(root,'./static/users/'+user+'/'+projectname+'/')
-        dirlist = os.listdir(path+"/"+user+"/"+projectname+"/out")
-        print dirlist
-        for odt in dirlist:
-            pdfgen.delay(odt,user,projectname,path2)
+         if os.path.isfile(str(odtout[1])):
+              pdfgen.delay(odtout,user,projectname)
 
 @celery_app.task(name='pdfgen',queue='pdfqu')
-def pdfgen(odt,user,projectname,path2):
-      print odt
+def pdfgen(odtout,user,projectname):
+      print 'inside pdf gen'+str(odtout[1])
       while True:
-           p = Popen('unoconv --format pdf -p 222'+str(current_process().index)+' --output '+path2+'pdfs/'+odt+'.pdf '+' '+path2+'odt/'+odt,shell=True,stdout=PIPE,stderr=PIPE)
+           p = Popen('unoconv --format pdf -p 222'+str(current_process().index)+' --output '+str(odtout[0])+'pdfs/'+str(odtout[2])+'.pdf '+' '+str(odtout[1]),shell=True,stdout=PIPE,stderr=PIPE)
            err = p.communicate()
            print 'asdas'
            if str(err) == "('', '')" :

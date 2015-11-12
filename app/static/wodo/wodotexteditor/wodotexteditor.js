@@ -359,6 +359,9 @@ window.Wodo = window.Wodo || (function () {
                 zoomingEnabled: zoomingEnabled,
                 reviewModeEnabled: reviewModeEnabled
             });
+            window.editorsess = editorSession;
+            console.log(editorSession);
+            console.log("***********************************************");
             if (undoRedoEnabled) {
                 editorSession.sessionController.setUndoManager(new gui.TrivialUndoManager());
                 editorSession.sessionController.getUndoManager().subscribe(gui.UndoManager.signalDocumentModifiedChanged, relayModifiedSignal);

@@ -70,7 +70,8 @@
                                  </div>
 
                             <a class="btn btn-md btn-info " id="try"  >try</a>
-                            <button class="btn btn-md btn-primary " type="submit">generate</button>
+                            <button class="btn btn-md btn-primary " type="submit">generate Odt</button>
+                            <a class="btn btn-md btn-primary" id="genpdf" >generate Pdf</a>
         <input type="hidden" id="templatename" class="form-control"  name="templatename" value='{{filename}}' required >
         <input type="hidden" id="projectname" class="form-control"  name="projectname" value='{{projectname}}' required >
                           </form>
@@ -158,6 +159,25 @@
 		         var wind = window.open("", "", "width=600,height=600,scrollbars=yes");
                  wind.document.write(data)
                 }
+		        },
+		        error: function(data) {
+		            // Failure.
+		            alert('We got a big error here.\n' + JSON.stringify(data));
+		        }
+		    });
+        });
+
+         $('#genpdf').click(	function(){
+         var fd = new FormData();
+         fd.append('projectname',"{{projectname}}");
+		 $.ajax({
+		        type: 'POST',
+		        url: '/generatepdf/',
+		        data: fd,
+		        processData: false,
+		        contentType: false,
+		        success: function(data) {
+		            // Success!
 		        },
 		        error: function(data) {
 		            // Failure.

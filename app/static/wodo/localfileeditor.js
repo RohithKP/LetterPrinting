@@ -190,9 +190,11 @@ function createEditor() {
 
         if (docUrl) {
             loadedFilename = docUrl;
-            editor.openDocumentFromUrl(docUrl+"?"+new Date().valueOf(), startEditing);
+            var x = editor.openDocumentFromUrl(docUrl+"?"+new Date().valueOf(), startEditing);
+            console.log(editor);
         }
     }
 
-    Wodo.createTextEditor('editorContainer', editorOptions, onEditorCreated);
+   Wodo.createTextEditor('editorContainer', editorOptions, onEditorCreated);
+
 }

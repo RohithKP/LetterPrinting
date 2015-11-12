@@ -340,6 +340,11 @@ define("webodf/editor/EditorSession", [
 
         this.insertTable = function (initialRows, initialColumns, tableStyleName, tableColumnStyleName, tableCellStyleMatrix) {
             var op = new ops.OpInsertTable();
+//      this.rows="initialRows";
+            console.log(initialRows);
+          console.log(tableColumnStyleName);
+          console.log(tableCellStyleMatrix);
+
             op.init({
                 memberid: localMemberId,
                 position: self.getCursorPosition(),
@@ -348,6 +353,15 @@ define("webodf/editor/EditorSession", [
                 tableStyleName: tableStyleName,
                 tableColumnStyleName: tableColumnStyleName,
                 tableCellStyleMatrix: tableCellStyleMatrix
+            });
+            session.enqueue([op]);
+        };
+      this.insertText = function (text) {
+            var op = new ops.OpInsertText();
+            op.init({
+                memberid: localMemberId,
+                position: self.getCursorPosition(),
+                text : text
             });
             session.enqueue([op]);
         };

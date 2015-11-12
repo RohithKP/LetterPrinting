@@ -271,7 +271,6 @@ def gen():
     ul = int(limit.text)
     remainder = ul%block
     for i in range(1,ul-remainder,block):
-        print i
         arr=[]
         arr.append(i)
         arr.append(i+block)
@@ -286,6 +285,13 @@ def gen():
         print arr
         print  task.generate.delay(templatename,jsonpath,projectname,session['user_name'],arr)
 
+    return "limit.text"
+
+@app.route('/generatepdf/',methods=['GET','POST'])
+def genpdf():
+    user = session['user_name']
+    projectname = request.form['projectname']
+    print  task.pdfgensch.delay(user,projectname)
     return "limit.text"
 
 @app.route('/listener')

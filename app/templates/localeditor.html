@@ -1,45 +1,65 @@
 <!DOCTYPE HTML>
 <html style="width:100%; height:100%; margin:0px; padding:0px" xml:lang="en" lang="en">
-  <head>
-    <!--
-    This HTML page is meant to bootstrap the webodf based ODF editor. This
-    is not the HTML page hosting any collaborative editing.
-    It will run on a standard HTTP server and as usual the webodf magic
-    happens client-side in your browser.
-    This page is meant to be served out of a webodf build directory.
-    -->
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <head>
+        <!--
+This HTML page is meant to bootstrap the webodf based ODF editor. This
+is not the HTML page hosting any collaborative editing.
+It will run on a standard HTTP server and as usual the webodf magic
+happens client-side in your browser.
+This page is meant to be served out of a webodf build directory.
+-->
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    <title>ODF Editor</title>
+        <title>ODF Editor</title>
 
-    <!-- editor: start -->
-    <script src="wodotexteditor/wodotexteditor.js" type="text/javascript" charset="utf-8"></script>
-    <script src="FileSaver.js" type="text/javascript" charset="utf-8"></script>
-    <script src="localfileeditor.js" type="text/javascript" charset="utf-8"></script>
-     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <!-- editor: end -->
-      <style>
-          .editable {
-        -moz-user-select: none;
-        -khtml-user-select: none;
-        -webkit-user-select: none;
-        -o-user-select: none;
-}
-          </style>
-  </head>
+        <!-- editor: start -->
+        <script src="wodotexteditor/wodotexteditor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="FileSaver.js" type="text/javascript" charset="utf-8"></script>
+        <script src="localfileeditor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/js/jquery.min.js" type="text/javascript"></script>
 
-  <body style="width:100%; height:100%; margin:0px; padding:0px;position:relative;" onload="createEditor();">
-    <button id="button" onclick="myFunction()" style="position:absolute;top:30px;right:0;z-index:300;background-color:aquamarine;">EDIT</button>
-    <div id="editorContainer" style="width:100%; height:100%; margin:0px; padding:0px;">
-        <div style="z-index:999;width:100%;height:100%;"></div>
-    </div>
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-   <script>
+        <!-- editor: end -->
+        <style>
+            .editable {
+                -moz-user-select: none;
+                -khtml-user-select: none;
+                -webkit-user-select: none;
+                -o-user-select: none;
+            }
+        </style>
+    </head>
+
+    <body style="width:100%; height:100%; margin:0px; padding:0px;position:relative;" onload="createEditor();">
+        <button id="button" onclick="myFunction()" style="position:absolute;top:30px;right:0;z-index:300;background-color:aquamarine;">EDIT</button>
+        <button id="insert" style="position:absolute;top:30px;right:30;z-index:300;background-color:aquamarine;">insert</button>
+
+        <div id="editorContainer" style="width:100%; height:100%; margin:0px; padding:0px;">
+            <div style="z-index:999;width:100%;height:100%;"></div>
+        </div>
+
+
+        <div id="divtoshow" style="position: fixed;display:none;width:280px;height:100px;background-color:#E0E0E0;">
+            <table width="100%" border="0">
+                <tr>
+                    <td>
+                        <div class="ui-widget">
+                            <input id="tags" />
+                        </div>
+                        <div id="results" style=" background-color:#E0E0E0;height:300px;width:280px"></div>
+                    </td>
+                </tr>
+            </table></div>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
+        <script>
             var positiveMargin = true;
             function myFunction() {
-            $("#editorContainer").toggleClass('editable');
-            $( ".webodf-caretOverlay" ).toggle();
-            if (!positiveMargin) {
+                //                 alert($('.caret').offset().top);
+                $("#editorContainer").toggleClass('editable');
+                $( ".webodf-caretOverlay" ).toggle();
+                if (!positiveMargin) {
                     var marginTop = "0px";
                     var Top = "54px";
                     positiveMargin = true;
@@ -50,20 +70,124 @@
                     positiveMargin = false;
                 }
                 $('#webodfeditor-toolbar1').animate({
-                           marginTop: marginTop
-                           }, {
-                           duration: 1000,
-                           complete: function () {
-                           }
-                         });
+                    marginTop: marginTop
+                }, {
+                    duration: 1000,
+                    complete: function () {
+                    }
+                });
                 $('#webodfeditor-canvascontainer1').animate({
-                           top:Top
-                           }, {
-                           duration: 1000,
-                           complete: function () {
-                           }
-                         });
+                    top:Top
+                }, {
+                    duration: 1000,
+                    complete: function () {
+                    }
+                });
             }
-      </script>
+            function insertBreakAtPoint(e,key) {
+                var range;
+                var textNode;
+                var offset;
+//                 var key = prompt("Enter the JSON Key", "name");
+                //           var key_final = '{{"{{"}}address.'+key+'{{"}}"}}';
+                if (key!=null){
+                    {% raw %}
+                    var key_final = '{address.'+key+'}}';
+                     {% endraw %}
+                     if (document.caretPositionFromPoint) {
+                         range = document.caretPositionFromPoint($('.webodf-caretOverlay').offset().left, $('.webodf-caretOverlay').offset().top);
+                         textNode = range.offsetNode;
+                         offset = range.offset;
+                     } else if (document.caretRangeFromPoint) {
+                         range = document.caretRangeFromPoint($('.webodf-caretOverlay').offset().left, $('.webodf-caretOverlay').offset().top);
+                         textNode = range.startContainer;
+                         offset = range.startOffset;
+                     }
+
+                      // only split TEXT_NODEs
+                      if (textNode.nodeType == 3) {
+                          console.log(textNode);
+                          var replacement = textNode.splitText(offset);
+                          var keynode = document.createTextNode(key_final);
+                          textNode.parentNode.insertBefore(keynode,replacement);
+                      }
+                     }
+                    }
+
+                    function KeyPress(e) {
+                        var evtobj = window.event? event : e
+                        if (evtobj.keyCode == 32 && evtobj.ctrlKey) {
+                            document.getElementById("tags").value='';
+                            hoverdiv(e,'divtoshow');
+                            document.getElementById("tags").focus();
+                        }
+                    }
+
+                    document.onkeydown = KeyPress;
+
+                    function hoverdiv(e,divid){
+
+                        var left  = $('.webodf-caretOverlay').offset().left  + "px";
+                        var top  = $('.webodf-caretOverlay').offset().top +10  + "px";
+
+                        var div = document.getElementById(divid);
+
+                        div.style.left = left;
+                        div.style.top = top;
+
+                        $("#"+divid).toggle();
+                        return false;
+                    }
+
+                    $(function() {
+                        var availableTags = [
+                            "ActionScript",
+                            "AppleScript",
+                            "Asp",
+                            "BASIC",
+                            "C",
+                            "C++",
+                            "Clojure",
+                            "COBOL",
+                            "ColdFusion",
+                            "Erlang",
+                            "Fortran",
+                            "Groovy",
+                            "Haskell",
+                            "Java",
+                            "JavaScript",
+                            "Lisp",
+                            "Perl",
+                            "PHP",
+                            "Python",
+                            "Ruby",
+                            "Scala",
+                            "Scheme"
+                        ];
+                        $( "#tags" ).autocomplete({
+                            source: availableTags,
+                            open: function() {
+                                $(this).autocomplete("widget")
+                                .appendTo("#results")
+                                .css("position", "static");
+                            }
+                        });
+                    });
+
+                    $(document).ready(function (e) {
+//                         $('#tags').on('change', function () {
+//                             var key = this.value;
+//                             insertBreakAtPoint(e,key);
+//                             hoverdiv(e,'divtoshow');
+//                         }).change();
+                        $('#tags').on('autocompleteselect', function (e, ui) {
+                            var  text = ui.item.value;
+//                             insertBreakAtPoint(e,key2);
+                            editorsess.insertText(text);
+                            hoverdiv(e,'divtoshow');
+                        });
+                    });
+
+        </script>
     </body>
 </html>
